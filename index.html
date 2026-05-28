@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tennis Ball Speed Radar – Pro+</title>
+    <title>Tennis Ball Speed Radar – Enhanced</title>
     <style>
         :root {
             --bg: #0a0a0f;
@@ -17,10 +17,9 @@
             --warning: #ffa502;
             --info: #3742fa;
             --border: #2a2a3a;
-            --radius: 20px;
-            --shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            --radius: 16px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
-
         * {
             margin: 0;
             padding: 0;
@@ -40,30 +39,28 @@
         }
         .header {
             text-align: center;
-            padding: 24px 16px 12px;
+            padding: 20px 16px 10px;
             width: 100%;
-            max-width: 1000px;
+            max-width: 960px;
         }
         .header h1 {
-            font-size: clamp(1.8rem, 5vw, 2.4rem);
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
             font-weight: 800;
-            background: linear-gradient(135deg, #c8e030 20%, #8bc34a 80%);
+            background: linear-gradient(135deg, #c8e030, #8bc34a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             letter-spacing: -0.02em;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
         }
         .subtitle {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text2);
-            margin-top: 6px;
-            letter-spacing: 0.05em;
+            margin-top: 4px;
         }
         .main-container {
             width: 100%;
-            max-width: 1000px;
-            padding: 0 16px 24px;
+            max-width: 960px;
+            padding: 0 12px 20px;
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -73,29 +70,23 @@
             background: #000;
             border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: var(--shadow);
             aspect-ratio: 16/9;
             min-height: 280px;
             border: 2px solid var(--border);
-            transition: all 0.3s ease;
-            background: linear-gradient(145deg, #0d0d17, #000);
+            box-shadow: var(--shadow);
+            transition: border-color 0.3s;
         }
         .camera-wrapper.tracking {
             border-color: var(--accent);
-            box-shadow: 0 0 45px rgba(200, 224, 48, 0.35), var(--shadow);
+            box-shadow: 0 0 40px rgba(200,224,48,0.3), var(--shadow);
         }
         .camera-wrapper.shot-detected {
             border-color: var(--warning);
-            box-shadow: 0 0 70px rgba(255, 165, 2, 0.6), var(--shadow);
-            animation: pulseBorder 0.5s ease-out;
-        }
-        @keyframes pulseBorder {
-            0%,100% { border-color: var(--warning); }
-            50% { border-color: #ff6b35; }
+            box-shadow: 0 0 60px rgba(255,165,2,0.5), var(--shadow);
         }
         .camera-wrapper.calibrating {
             border-color: #fff;
-            box-shadow: 0 0 50px rgba(255,255,255,0.5);
+            box-shadow: 0 0 40px rgba(255,255,255,0.4);
         }
         video {
             display: none;
@@ -117,17 +108,16 @@
             z-index: 10;
         }
         .status-badge {
-            background: rgba(10, 10, 20, 0.8);
-            backdrop-filter: blur(16px);
-            padding: 8px 16px;
-            border-radius: 30px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(12px);
+            padding: 8px 15px;
+            border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
             border: 1px solid rgba(255,255,255,0.2);
-            color: #fff;
         }
         .status-dot {
             width: 10px;
@@ -138,30 +128,34 @@
         }
         .status-dot.active {
             background: #4caf50;
-            box-shadow: 0 0 12px #4caf50;
-            animation: dotPulse 1.2s infinite;
+            box-shadow: 0 0 10px #4caf50;
+            animation: dotPulse 1.5s infinite;
         }
         .status-dot.tracking {
             background: #c8e030;
-            box-shadow: 0 0 14px #c8e030;
+            box-shadow: 0 0 12px #c8e030;
             animation: dotPulse 0.7s infinite;
         }
         @keyframes dotPulse {
-            0%,100% { box-shadow: 0 0 8px currentColor; }
-            50% { box-shadow: 0 0 22px currentColor, 0 0 36px currentColor; }
+            0%,
+            100% {
+                box-shadow: 0 0 8px currentColor;
+            }
+            50% {
+                box-shadow: 0 0 18px currentColor, 0 0 30px currentColor;
+            }
         }
         .fps-badge {
-            background: rgba(10, 10, 20, 0.8);
-            backdrop-filter: blur(16px);
-            padding: 6px 14px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(12px);
+            padding: 6px 12px;
             border-radius: 16px;
             font-size: 0.7rem;
             font-weight: 500;
-            color: #ccc;
-            border: 1px solid rgba(255,255,255,0.2);
+            color: #aaa;
+            border: 1px solid rgba(255,255,255,0.15);
             pointer-events: auto;
         }
-
         .dashboard {
             display: flex;
             flex-wrap: wrap;
@@ -174,7 +168,6 @@
             flex-wrap: wrap;
             align-items: center;
             justify-content: center;
-            flex: 1 1 300px;
         }
         .gauge-container {
             position: relative;
@@ -203,7 +196,6 @@
             line-height: 1;
             color: #fff;
             text-shadow: 0 0 15px rgba(255,255,255,0.3);
-            transition: color 0.3s;
         }
         .speed-unit {
             font-size: 0.85rem;
@@ -216,7 +208,6 @@
             padding: 16px 22px;
             border: 1px solid var(--border);
             text-align: center;
-            backdrop-filter: blur(10px);
         }
         .peak-panel .label {
             font-size: 0.7rem;
@@ -229,32 +220,6 @@
             font-weight: 700;
             color: #ffa502;
         }
-        .stats-row {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .stat-card {
-            background: var(--surface);
-            border-radius: 16px;
-            padding: 12px 20px;
-            border: 1px solid var(--border);
-            text-align: center;
-            min-width: 80px;
-        }
-        .stat-card .num {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--accent);
-        }
-        .stat-card .desc {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--text2);
-        }
-
         .controls {
             display: flex;
             gap: 8px;
@@ -262,8 +227,9 @@
             justify-content: center;
             align-items: center;
         }
-        button, select {
-            padding: 12px 22px;
+        button,
+        select {
+            padding: 12px 20px;
             border-radius: 30px;
             border: none;
             font-size: 0.85rem;
@@ -277,17 +243,16 @@
             border: 1.5px solid var(--border);
             transition: all 0.25s;
             outline: none;
-            backdrop-filter: blur(8px);
         }
-        button:hover, select:hover {
+        button:hover,
+        select:hover {
             background: #252540;
             border-color: #666;
-            transform: translateY(-1px);
         }
         .btn-primary {
             background: var(--accent);
             color: #1a1a00;
-            box-shadow: 0 6px 20px rgba(200,224,48,0.35);
+            box-shadow: 0 4px 16px rgba(200,224,48,0.3);
             border: none;
         }
         .btn-primary:hover {
@@ -296,7 +261,7 @@
         .btn-calibrate {
             background: #4a4aff;
             color: #fff;
-            box-shadow: 0 6px 20px rgba(74,74,255,0.4);
+            box-shadow: 0 4px 16px rgba(74,74,255,0.3);
             border: none;
         }
         .btn-calibrate:hover {
@@ -311,7 +276,8 @@
             background: #ff475720;
             border-color: #ff6b6b;
         }
-        button:disabled, select:disabled {
+        button:disabled,
+        select:disabled {
             opacity: 0.4;
             pointer-events: none;
         }
@@ -322,7 +288,6 @@
             background-position: right 14px center;
             appearance: none;
         }
-
         .settings-panel {
             background: var(--surface);
             border-radius: var(--radius);
@@ -331,7 +296,6 @@
             display: none;
             flex-direction: column;
             gap: 12px;
-            backdrop-filter: blur(12px);
         }
         .settings-panel.open {
             display: flex;
@@ -363,33 +327,10 @@
             color: #777;
             font-style: italic;
         }
-
-        .history-panel {
-            background: var(--surface);
-            border-radius: var(--radius);
-            padding: 16px;
-            border: 1px solid var(--border);
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        .history-panel h3 {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--text2);
-            margin-bottom: 8px;
-        }
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px solid #222;
-            font-size: 0.8rem;
-        }
         .info-banner {
             background: var(--surface2);
             border-radius: 14px;
-            padding: 14px 18px;
+            padding: 12px 18px;
             font-size: 0.8rem;
             color: #aaa;
             text-align: center;
@@ -400,12 +341,11 @@
 </head>
 <body>
     <div class="header">
-        <h1>🎾 Ball Speed Radar Pro+</h1>
-        <p class="subtitle">Kalman tracking · Live gauge · Color calibration · Shot history</p>
+        <h1>🎾 Ball Speed Radar Pro</h1>
+        <p class="subtitle">Glowing ball trail · Customizable tracking · Instant speed</p>
     </div>
 
     <div class="main-container">
-        <!-- Camera View -->
         <div class="camera-wrapper" id="cameraWrapper">
             <video id="video" playsinline autoplay muted></video>
             <canvas id="displayCanvas"></canvas>
@@ -418,7 +358,6 @@
             </div>
         </div>
 
-        <!-- Dashboard: Gauge + Peak + Stats -->
         <div class="dashboard">
             <div class="speed-panel">
                 <div class="gauge-container" id="gaugeContainer">
@@ -433,23 +372,8 @@
                     <div class="value" id="peakSpeed">0 <sup>mph</sup></div>
                 </div>
             </div>
-            <div class="stats-row">
-                <div class="stat-card">
-                    <div class="num" id="shotCount">0</div>
-                    <div class="desc">Shots</div>
-                </div>
-                <div class="stat-card">
-                    <div class="num" id="avgSpeed">--</div>
-                    <div class="desc">Avg mph</div>
-                </div>
-                <div class="stat-card">
-                    <div class="num" id="lastSpeed">--</div>
-                    <div class="desc">Last mph</div>
-                </div>
-            </div>
         </div>
 
-        <!-- Controls -->
         <div class="controls">
             <button class="btn-primary" id="btnStart">📷 Start Camera</button>
             <button id="btnCalibrate" class="btn-calibrate" disabled>🎯 Calibrate Color</button>
@@ -459,58 +383,33 @@
                 <option value="medium" selected>60 fps</option>
                 <option value="high">Max fps</option>
             </select>
-            <button id="btnSettings">⚙️ Tuning</button>
+            <button id="btnSettings">⚙️ Settings</button>
             <button class="btn-danger" id="btnReset">↺ Reset</button>
         </div>
 
-        <!-- HSV Settings -->
         <div class="settings-panel" id="settingsPanel">
             <h3>HSV Color Tuning</h3>
-            <div class="setting-row">
-                <label>Hue Min</label>
-                <input type="range" id="hueMin" min="0" max="180" value="20">
-                <span class="range-val" id="hueMinVal">20</span>
-            </div>
-            <div class="setting-row">
-                <label>Hue Max</label>
-                <input type="range" id="hueMax" min="0" max="180" value="55">
-                <span class="range-val" id="hueMaxVal">55</span>
-            </div>
-            <div class="setting-row">
-                <label>Sat Min</label>
-                <input type="range" id="satMin" min="0" max="255" value="40">
-                <span class="range-val" id="satMinVal">40</span>
-            </div>
-            <div class="setting-row">
-                <label>Val Min</label>
-                <input type="range" id="valMin" min="0" max="255" value="60">
-                <span class="range-val" id="valMinVal">60</span>
-            </div>
+            <div class="setting-row"><label>Hue Min</label><input type="range" id="hueMin" min="0" max="180" value="20"><span class="range-val" id="hueMinVal">20</span></div>
+            <div class="setting-row"><label>Hue Max</label><input type="range" id="hueMax" min="0" max="180" value="55"><span class="range-val" id="hueMaxVal">55</span></div>
+            <div class="setting-row"><label>Sat Min</label><input type="range" id="satMin" min="0" max="255" value="40"><span class="range-val" id="satMinVal">40</span></div>
+            <div class="setting-row"><label>Val Min</label><input type="range" id="valMin" min="0" max="255" value="60"><span class="range-val" id="valMinVal">60</span></div>
             <button id="btnResetCalibration" style="width:fit-content;">↩ Reset to default</button>
-            <p class="setting-hint">Manual tuning · Or click 🎯 Calibrate and tap the ball.</p>
-        </div>
 
-        <!-- Shot History -->
-        <div class="history-panel" id="historyPanel">
-            <h3>📋 Recent Shots (mph)</h3>
-            <div id="historyList">
-                <span style="color:#555;">No shots recorded yet.</span>
-            </div>
+            <h3 style="margin-top: 8px;">Visual Customization</h3>
+            <div class="setting-row"><label>Trail Length</label><input type="range" id="trailLength" min="5" max="40" value="20"><span class="range-val" id="trailLengthVal">20</span></div>
+            <div class="setting-row"><label>Circle Glow</label><input type="range" id="circleGlow" min="5" max="30" value="15"><span class="range-val" id="circleGlowVal">15</span></div>
+            <p class="setting-hint">Customize the ball trail and glow size.</p>
         </div>
 
         <div class="info-banner">
-            <strong>💡 Pro tips:</strong> For long shots, use <strong>Calibrate Color</strong> on the ball · 
-            Best at <strong>60fps</strong> · Side‑on view · Ball diameter (6.7cm) used for scale.
+            <strong>💡 Pro tips:</strong> Use <strong>Calibrate Color</strong> on the ball · Best at <strong>60fps</strong> · Side‑on view works best.
         </div>
     </div>
 
     <script>
-        // ----------------------------------------------------------------------
-        // Tennis Ball Speed Radar Pro+ – fully event‑driven, no inline handlers
-        // ----------------------------------------------------------------------
         class RadarApp {
             constructor() {
-                // Grab all DOM elements (safe – only called after DOMContentLoaded)
+                // Grab all elements (with fallback safety)
                 this.elements = {
                     video: document.getElementById('video'),
                     displayCanvas: document.getElementById('displayCanvas'),
@@ -521,10 +420,6 @@
                     fpsDisplay: document.getElementById('fpsDisplay'),
                     speedValue: document.getElementById('speedValue'),
                     peakSpeedEl: document.getElementById('peakSpeed'),
-                    shotCount: document.getElementById('shotCount'),
-                    avgSpeed: document.getElementById('avgSpeed'),
-                    lastSpeed: document.getElementById('lastSpeed'),
-                    historyList: document.getElementById('historyList'),
                     btnStart: document.getElementById('btnStart'),
                     btnCalibrate: document.getElementById('btnCalibrate'),
                     btnSwitchCam: document.getElementById('btnSwitchCam'),
@@ -538,11 +433,15 @@
                     hueMaxVal: document.getElementById('hueMaxVal'),
                     satMinVal: document.getElementById('satMinVal'),
                     valMinVal: document.getElementById('valMinVal'),
+                    trailLength: document.getElementById('trailLength'),
+                    trailLengthVal: document.getElementById('trailLengthVal'),
+                    circleGlow: document.getElementById('circleGlow'),
+                    circleGlowVal: document.getElementById('circleGlowVal'),
                 };
 
-                // Verify critical elements exist
+                // Verify critical elements
                 if (!this.elements.video || !this.elements.displayCanvas || !this.elements.gaugeCanvas) {
-                    console.error('RadarApp: Critical DOM elements missing. Aborting.');
+                    console.error('Critical elements missing');
                     return;
                 }
 
@@ -553,7 +452,6 @@
                 this.procWidth = 640;
                 this.procHeight = 360;
 
-                // State
                 this.stream = null;
                 this.facingMode = 'environment';
                 this.isCameraActive = false;
@@ -579,55 +477,41 @@
                 this.ballDiameterMeters = 0.067;
 
                 this.lastFrameTime = performance.now();
-                this.fps = 0; this.fpsCounter = 0; this.fpsTimer = performance.now();
+                this.fps = 0;
+                this.fpsCounter = 0;
+                this.fpsTimer = performance.now();
                 this.quality = 'medium';
 
-                // Kalman state
-                this.kalman = { x:0, y:0, vx:0, vy:0, P:[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]], Q:0.01, R:5, lastTime:null };
-
-                // History & stats
-                this.shotHistory = [];   // { speed, timestamp }
-                this.totalShots = 0;
-                this.sumSpeeds = 0;
+                this.kalman = { x: 0, y: 0, vx: 0, vy: 0, P: [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]], Q: 0.01, R: 5, lastTime: null };
 
                 // Bind methods
                 this.processFrame = this.processFrame.bind(this);
                 this.handleCalibrationClick = this.handleCalibrationClick.bind(this);
 
-                // Attach all event listeners (no inline onclick in HTML)
                 this.attachEvents();
                 this.updateSettingsUI();
             }
 
-            // ---------------------------------------------------------------
-            // Event wiring (replaces all inline onclick)
-            // ---------------------------------------------------------------
             attachEvents() {
-                this.elements.btnStart.addEventListener('click', () => this.startCamera());
-                this.elements.btnCalibrate.addEventListener('click', () => this.startCalibration());
-                this.elements.btnSwitchCam.addEventListener('click', () => this.switchCamera());
-                this.elements.qualitySelect.addEventListener('change', (e) => this.changeQuality(e.target.value));
-                this.elements.btnSettings.addEventListener('click', () => this.toggleSettings());
-                this.elements.btnReset.addEventListener('click', () => this.resetPeak());
+                const e = this.elements;
+                e.btnStart.addEventListener('click', () => this.startCamera());
+                e.btnCalibrate.addEventListener('click', () => this.startCalibration());
+                e.btnSwitchCam.addEventListener('click', () => this.switchCamera());
+                e.qualitySelect.addEventListener('change', (ev) => this.changeQuality(ev.target.value));
+                e.btnSettings.addEventListener('click', () => this.toggleSettings());
+                e.btnReset.addEventListener('click', () => this.resetPeak());
                 document.getElementById('btnResetCalibration').addEventListener('click', () => this.resetCalibration());
-                ['hueMin','hueMax','satMin','valMin'].forEach(id => {
-                    this.elements[id].addEventListener('input', () => this.updateSettings());
+                ['hueMin', 'hueMax', 'satMin', 'valMin', 'trailLength', 'circleGlow'].forEach(id => {
+                    const el = this.elements[id];
+                    if (el) el.addEventListener('input', () => this.updateSettings());
                 });
-                window.addEventListener('resize', this.debounce(() => this.handleResize(), 200));
+                window.addEventListener('resize', () => {
+                    clearTimeout(this._resizeTimer);
+                    this._resizeTimer = setTimeout(() => this.handleResize(), 200);
+                });
                 window.addEventListener('orientationchange', () => setTimeout(() => this.handleResize(), 500));
             }
 
-            debounce(fn, delay) {
-                let timer;
-                return (...args) => {
-                    clearTimeout(timer);
-                    timer = setTimeout(() => fn.apply(this, args), delay);
-                };
-            }
-
-            // ---------------------------------------------------------------
-            // Camera lifecycle
-            // ---------------------------------------------------------------
             async startCamera() {
                 if (this.isCameraActive) { this.stopCamera(); return; }
                 try {
@@ -643,6 +527,7 @@
                     this.isCameraActive = true;
                     this.isProcessing = true;
                     this.calibrationMode = false;
+
                     this.elements.statusDot.className = 'status-dot active';
                     this.elements.statusText.textContent = 'Camera Active';
                     this.elements.btnStart.innerHTML = '⏹ Stop';
@@ -652,6 +537,7 @@
                     this.elements.btnSwitchCam.disabled = false;
                     this.elements.qualitySelect.disabled = false;
                     this.elements.cameraWrapper.classList.add('tracking');
+
                     this.resetTracking();
                     this.lastFrameTime = performance.now();
                     this.fpsTimer = performance.now();
@@ -670,7 +556,7 @@
                 if (this.animationId) cancelAnimationFrame(this.animationId);
                 if (this.stream) { this.stream.getTracks().forEach(t => t.stop()); this.stream = null; }
                 this.elements.video.srcObject = null;
-                this.displayCtx.clearRect(0,0,this.elements.displayCanvas.width, this.elements.displayCanvas.height);
+                this.displayCtx.clearRect(0, 0, this.elements.displayCanvas.width, this.elements.displayCanvas.height);
                 this.elements.statusDot.className = 'status-dot';
                 this.elements.statusText.textContent = 'Camera Off';
                 this.elements.btnStart.innerHTML = '📷 Start Camera';
@@ -679,18 +565,20 @@
                 this.elements.btnCalibrate.disabled = true;
                 this.elements.btnSwitchCam.disabled = true;
                 this.elements.qualitySelect.disabled = true;
-                this.elements.cameraWrapper.classList.remove('tracking','shot-detected','calibrating');
+                this.elements.cameraWrapper.classList.remove('tracking', 'shot-detected', 'calibrating');
                 this.elements.speedValue.textContent = '--';
                 this.displayedSpeed = 0;
                 this.drawGauge(0);
-                this.ballDetected = false; this.trackedBall = null; this.ballPositions = [];
+                this.ballDetected = false;
+                this.trackedBall = null;
+                this.ballPositions = [];
             }
 
             getVideoConstraints() {
-                const base = { video: { facingMode: this.facingMode, width:{ideal:1280}, height:{ideal:720} }, audio:false };
-                if (this.quality === 'low') base.video.frameRate = {ideal:30, max:30};
-                else if (this.quality === 'high') base.video.frameRate = {ideal:120, min:60};
-                else base.video.frameRate = {ideal:60, min:30};
+                const base = { video: { facingMode: this.facingMode, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false };
+                if (this.quality === 'low') base.video.frameRate = { ideal: 30, max: 30 };
+                else if (this.quality === 'high') base.video.frameRate = { ideal: 120, min: 60 };
+                else base.video.frameRate = { ideal: 60, min: 30 };
                 return base;
             }
 
@@ -701,35 +589,37 @@
 
             async switchCamera() {
                 this.facingMode = this.facingMode === 'environment' ? 'user' : 'environment';
-                if (this.isCameraActive) { this.stopCamera(); await new Promise(r => setTimeout(r,300)); await this.startCamera(); }
+                if (this.isCameraActive) { this.stopCamera(); await new Promise(r => setTimeout(r, 300)); await this.startCamera(); }
             }
 
             setupCanvasSizes() {
-                const vw = this.elements.video.videoWidth, vh = this.elements.video.videoHeight;
+                const vw = this.elements.video.videoWidth;
+                const vh = this.elements.video.videoHeight;
                 const rect = this.elements.cameraWrapper.getBoundingClientRect();
-                const dw = rect.width, dh = rect.height;
-                const dpr = Math.min(window.devicePixelRatio||1, 2);
-                this.elements.displayCanvas.width = dw * dpr;
-                this.elements.displayCanvas.height = dh * dpr;
-                this.elements.displayCanvas.style.width = dw + 'px';
-                this.elements.displayCanvas.style.height = dh + 'px';
-                this.displayCtx.setTransform(1,0,0,1,0,0);
+                const displayWidth = rect.width || 640; // fallback
+                const displayHeight = rect.height || 360;
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                this.elements.displayCanvas.width = displayWidth * dpr;
+                this.elements.displayCanvas.height = displayHeight * dpr;
+                this.elements.displayCanvas.style.width = displayWidth + 'px';
+                this.elements.displayCanvas.style.height = displayHeight + 'px';
+                this.displayCtx.setTransform(1, 0, 0, 1, 0, 0);
                 this.displayCtx.scale(dpr, dpr);
-                const aspect = vw/vh;
+                const aspect = vw / vh;
                 this.procWidth = Math.min(640, vw);
-                this.procHeight = Math.round(this.procWidth/aspect);
+                this.procHeight = Math.round(this.procWidth / aspect);
                 this.procCanvas.width = this.procWidth;
                 this.procCanvas.height = this.procHeight;
             }
 
             resetTracking() {
-                this.ballPositions = []; this.trackedBall = null; this.ballDetected = false; this.currentBall = null;
-                this.kalman = { x:0, y:0, vx:0, vy:0, P:[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]], Q:0.01, R:5, lastTime:null };
+                this.ballPositions = [];
+                this.trackedBall = null;
+                this.ballDetected = false;
+                this.currentBall = null;
+                this.kalman = { x: 0, y: 0, vx: 0, vy: 0, P: [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]], Q: 0.01, R: 5, lastTime: null };
             }
 
-            // ---------------------------------------------------------------
-            // Main processing loop
-            // ---------------------------------------------------------------
             processFrame(timestamp) {
                 if (!this.isProcessing) return;
                 this.animationId = requestAnimationFrame(this.processFrame);
@@ -737,22 +627,27 @@
                 this.fpsCounter++;
                 if (timestamp - this.fpsTimer >= 1000) {
                     this.fps = Math.round(this.fpsCounter / ((timestamp - this.fpsTimer) / 1000));
-                    this.fpsCounter = 0; this.fpsTimer = timestamp;
+                    this.fpsCounter = 0;
+                    this.fpsTimer = timestamp;
                     this.elements.fpsDisplay.textContent = this.fps + ' FPS';
                 }
+
                 if (this.calibrationMode) return;
                 if (this.elements.video.readyState < 2 || this.elements.video.videoWidth === 0) return;
 
-                const displayW = this.elements.displayCanvas.width / (Math.min(window.devicePixelRatio||1, 2));
-                const displayH = this.elements.displayCanvas.height / (Math.min(window.devicePixelRatio||1, 2));
-                this.displayCtx.clearRect(0,0,displayW,displayH);
-                const vw = this.elements.video.videoWidth, vh = this.elements.video.videoHeight;
-                const scale = Math.min(displayW/vw, displayH/vh);
-                const dx = (displayW - vw*scale)/2, dy = (displayH - vh*scale)/2;
-                this.displayCtx.drawImage(this.elements.video, dx, dy, vw*scale, vh*scale);
+                const displayW = this.elements.displayCanvas.width / (Math.min(window.devicePixelRatio || 1, 2));
+                const displayH = this.elements.displayCanvas.height / (Math.min(window.devicePixelRatio || 1, 2));
+                this.displayCtx.clearRect(0, 0, displayW, displayH);
 
-                this.procCtx.drawImage(this.elements.video, 0,0, this.procWidth, this.procHeight);
-                const imageData = this.procCtx.getImageData(0,0,this.procWidth, this.procHeight);
+                const vw = this.elements.video.videoWidth;
+                const vh = this.elements.video.videoHeight;
+                const scale = Math.min(displayW / vw, displayH / vh);
+                const dx = (displayW - vw * scale) / 2;
+                const dy = (displayH - vh * scale) / 2;
+                this.displayCtx.drawImage(this.elements.video, dx, dy, vw * scale, vh * scale);
+
+                this.procCtx.drawImage(this.elements.video, 0, 0, this.procWidth, this.procHeight);
+                const imageData = this.procCtx.getImageData(0, 0, this.procWidth, this.procHeight);
                 const rawBall = this.detectBallAdvanced(imageData.data, this.procWidth, this.procHeight);
 
                 if (rawBall) {
@@ -766,7 +661,9 @@
                 } else {
                     this.framesSinceLastDetection++;
                     if (this.framesSinceLastDetection > 10) {
-                        this.ballDetected = false; this.currentBall = null; this.ballPositions = [];
+                        this.ballDetected = false;
+                        this.currentBall = null;
+                        this.ballPositions = [];
                         if (this.shotActive && this.framesSinceLastDetection > 20) this.endShot();
                     }
                 }
@@ -776,115 +673,139 @@
                 this.drawGauge(this.displayedSpeed);
             }
 
-            // Advanced detection (color + blob + proximity scoring)
             detectBallAdvanced(pixels, width, height) {
-                const {hueMin, hueMax, satMin, valMin} = this.hsvSettings;
+                const { hueMin, hueMax, satMin, valMin } = this.hsvSettings;
                 const stride = 2;
-                const mw = Math.floor(width/stride), mh = Math.floor(height/stride);
-                const mask = new Uint8Array(mw*mh);
-                for (let y=0; y<height; y+=stride) {
-                    for (let x=0; x<width; x+=stride) {
-                        const idx = (y*width+x)*4;
-                        const r=pixels[idx], g=pixels[idx+1], b=pixels[idx+2];
-                        const max=Math.max(r,g,b), min=Math.min(r,g,b), delta=max-min;
-                        if (delta<1) continue;
-                        let h=0;
-                        if(max===r) h=((g-b)/delta)%6; else if(max===g) h=(b-r)/delta+2; else h=(r-g)/delta+4;
-                        h=Math.round(h*30); if(h<0) h+=180;
-                        const s=Math.round((delta/max)*255), v=max;
-                        if(h>=hueMin && h<=hueMax && s>=satMin && v>=valMin) {
-                            mask[Math.floor(y/stride)*mw + Math.floor(x/stride)] = 1;
+                const mw = Math.floor(width / stride);
+                const mh = Math.floor(height / stride);
+                const mask = new Uint8Array(mw * mh);
+
+                for (let y = 0; y < height; y += stride) {
+                    for (let x = 0; x < width; x += stride) {
+                        const idx = (y * width + x) * 4;
+                        const r = pixels[idx], g = pixels[idx + 1], b = pixels[idx + 2];
+                        const max = Math.max(r, g, b), min = Math.min(r, g, b), delta = max - min;
+                        if (delta < 1) continue;
+                        let h = 0;
+                        if (max === r) h = ((g - b) / delta) % 6;
+                        else if (max === g) h = (b - r) / delta + 2;
+                        else h = (r - g) / delta + 4;
+                        h = Math.round(h * 30);
+                        if (h < 0) h += 180;
+                        const s = Math.round((delta / max) * 255);
+                        const v = max;
+                        if (h >= hueMin && h <= hueMax && s >= satMin && v >= valMin) {
+                            mask[Math.floor(y / stride) * mw + Math.floor(x / stride)] = 1;
                         }
                     }
                 }
+
                 const blobs = this.labelBlobs(mask, mw, mh, stride);
                 let best = null, bestScore = -Infinity;
                 for (const blob of blobs) {
                     if (blob.points.length < 6) continue;
-                    if (blob.radius<2 || blob.radius>70) continue;
+                    if (blob.radius < 2 || blob.radius > 70) continue;
                     let proximity = 0;
                     if (this.trackedBall) {
-                        const dist = Math.hypot(blob.cx-this.trackedBall.x, blob.cy-this.trackedBall.y);
-                        if(dist<50) proximity=40; else if(dist<100) proximity=15;
+                        const dist = Math.hypot(blob.cx - this.trackedBall.x, blob.cy - this.trackedBall.y);
+                        if (dist < 50) proximity = 40;
+                        else if (dist < 100) proximity = 15;
                     }
-                    const score = blob.points.length*0.2 + blob.circularity*30 + proximity;
-                    if(score>bestScore) { bestScore=score; best={x:blob.cx, y:blob.cy, radius:blob.radius}; }
+                    const score = blob.points.length * 0.2 + blob.circularity * 30 + proximity;
+                    if (score > bestScore) { bestScore = score; best = { x: blob.cx, y: blob.cy, radius: blob.radius }; }
                 }
                 return best;
             }
 
             labelBlobs(mask, mw, mh, stride) {
-                const labels = new Int32Array(mw*mh).fill(0);
-                const parent = [0]; let nextLabel=1;
-                const find = (x)=>{ while(parent[x]!==x){parent[x]=parent[parent[x]]; x=parent[x];} return x; };
-                const union = (a,b)=>{ a=find(a); b=find(b); if(a!==b) parent[b]=a; };
-                for(let y=0; y<mh; y++) {
-                    for(let x=0; x<mw; x++) {
-                        if(!mask[y*mw+x]) continue;
-                        const idx = y*mw+x;
-                        const left = x>0? labels[idx-1]:0;
-                        const up = y>0? labels[idx-mw]:0;
-                        if(!left && !up) { parent[nextLabel]=nextLabel; labels[idx]=nextLabel++; }
-                        else if(left && !up) labels[idx]=left;
-                        else if(!left && up) labels[idx]=up;
-                        else { labels[idx]=left; union(left,up); }
+                const labels = new Int32Array(mw * mh).fill(0);
+                const parent = [0];
+                let nextLabel = 1;
+                const find = (x) => { while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; };
+                const union = (a, b) => { a = find(a); b = find(b); if (a !== b) parent[b] = a; };
+                for (let y = 0; y < mh; y++) {
+                    for (let x = 0; x < mw; x++) {
+                        if (!mask[y * mw + x]) continue;
+                        const idx = y * mw + x;
+                        const left = x > 0 ? labels[idx - 1] : 0;
+                        const up = y > 0 ? labels[idx - mw] : 0;
+                        if (!left && !up) { parent[nextLabel] = nextLabel; labels[idx] = nextLabel++; }
+                        else if (left && !up) labels[idx] = left;
+                        else if (!left && up) labels[idx] = up;
+                        else { labels[idx] = left; union(left, up); }
                     }
                 }
-                for(let i=0;i<labels.length;i++) if(labels[i]) labels[i]=find(labels[i]);
+                for (let i = 0; i < labels.length; i++) if (labels[i]) labels[i] = find(labels[i]);
+
                 const blobsMap = {};
-                for(let y=0;y<mh;y++) for(let x=0;x<mw;x++) {
-                    const lbl = labels[y*mw+x]; if(!lbl) continue;
-                    if(!blobsMap[lbl]) blobsMap[lbl]=[];
-                    blobsMap[lbl].push({x:x*stride, y:y*stride});
+                for (let y = 0; y < mh; y++) {
+                    for (let x = 0; x < mw; x++) {
+                        const lbl = labels[y * mw + x];
+                        if (!lbl) continue;
+                        if (!blobsMap[lbl]) blobsMap[lbl] = [];
+                        blobsMap[lbl].push({ x: x * stride, y: y * stride });
+                    }
                 }
                 const blobs = [];
-                for(const lbl in blobsMap) {
-                    const pts=blobsMap[lbl]; let sx=0,sy=0;
-                    for(const p of pts){sx+=p.x; sy+=p.y;}
-                    const cx=sx/pts.length, cy=sy/pts.length;
-                    let sumDist=0; const dists=[];
-                    for(const p of pts){ const d=Math.hypot(p.x-cx,p.y-cy); dists.push(d); sumDist+=d; }
-                    const radius=sumDist/pts.length;
-                    const circleArea=Math.PI*radius*radius, pixelArea=pts.length*(stride*stride);
-                    const circularity=Math.min(pixelArea/circleArea, circleArea/pixelArea);
-                    blobs.push({points:pts, cx,cy,radius,circularity});
+                for (const lbl in blobsMap) {
+                    const pts = blobsMap[lbl];
+                    let sx = 0, sy = 0;
+                    for (const p of pts) { sx += p.x; sy += p.y; }
+                    const cx = sx / pts.length, cy = sy / pts.length;
+                    let sumDist = 0;
+                    for (const p of pts) { sumDist += Math.hypot(p.x - cx, p.y - cy); }
+                    const radius = sumDist / pts.length;
+                    const circleArea = Math.PI * radius * radius;
+                    const pixelArea = pts.length * (stride * stride);
+                    const circularity = Math.min(pixelArea / circleArea, circleArea / pixelArea);
+                    blobs.push({ points: pts, cx, cy, radius, circularity });
                 }
                 return blobs;
             }
 
             applyKalmanFilter(detection, timestamp) {
                 const k = this.kalman;
-                if(k.lastTime===null) {
-                    k.x=detection.x; k.y=detection.y; k.vx=0; k.vy=0; k.lastTime=timestamp;
-                    return {x:detection.x, y:detection.y, radius:detection.radius};
+                if (k.lastTime === null) {
+                    k.x = detection.x; k.y = detection.y; k.vx = 0; k.vy = 0; k.lastTime = timestamp;
+                    return { x: detection.x, y: detection.y, radius: detection.radius };
                 }
-                const dt = (timestamp - k.lastTime)/1000; if(dt<=0) return detection;
+                const dt = (timestamp - k.lastTime) / 1000;
+                if (dt <= 0) return detection;
                 k.lastTime = timestamp;
-                const newX = k.x + k.vx*dt, newY = k.y + k.vy*dt;
+                const newX = k.x + k.vx * dt;
+                const newY = k.y + k.vy * dt;
                 const q = k.Q;
-                k.P[0][0] += q*dt; k.P[1][1] += q*dt; k.P[2][2] += q; k.P[3][3] += q;
-                const zx=detection.x, zy=detection.y, r=k.R;
-                const kx = k.P[0][0]/(k.P[0][0]+r), ky = k.P[1][1]/(k.P[1][1]+r);
-                k.x = newX + kx*(zx-newX); k.y = newY + ky*(zy-newY);
-                k.P[0][0] *= (1-kx); k.P[1][1] *= (1-ky);
-                return {x:k.x, y:k.y, radius:detection.radius};
+                k.P[0][0] += q * dt; k.P[1][1] += q * dt; k.P[2][2] += q; k.P[3][3] += q;
+                const zx = detection.x, zy = detection.y, r = k.R;
+                const kx = k.P[0][0] / (k.P[0][0] + r), ky = k.P[1][1] / (k.P[1][1] + r);
+                k.x = newX + kx * (zx - newX);
+                k.y = newY + ky * (zy - newY);
+                k.P[0][0] *= (1 - kx); k.P[1][1] *= (1 - ky);
+                return { x: k.x, y: k.y, radius: detection.radius };
             }
 
             calculateSpeed() {
-                const hist = this.ballPositions; if(hist.length<2) return;
-                const recent = hist.slice(-8); const first=recent[0], last=recent[recent.length-1];
-                const dt = (last.timestamp-first.timestamp)/1000; if(dt<0.005) return;
-                let avgR=0; for(const p of recent) avgR+=p.radius; avgR/=recent.length; if(avgR<1.5) return;
-                const mPerPx = (this.ballDiameterMeters/2)/avgR;
-                const pixDist = Math.hypot(last.x-first.x, last.y-first.y);
-                const speedMps = (pixDist*mPerPx)/dt;
-                const clamped = Math.max(0, Math.min(speedMps,85));
-                this.currentSpeedMps = clamped; this.currentSpeedMph = clamped*2.23694;
+                const hist = this.ballPositions;
+                if (hist.length < 2) return;
+                const recent = hist.slice(-8);
+                const first = recent[0], last = recent[recent.length - 1];
+                const dt = (last.timestamp - first.timestamp) / 1000;
+                if (dt < 0.005) return;
+                let avgR = 0;
+                for (const p of recent) avgR += p.radius;
+                avgR /= recent.length;
+                if (avgR < 1.5) return;
+                const mPerPx = (this.ballDiameterMeters / 2) / avgR;
+                const pixDist = Math.hypot(last.x - first.x, last.y - first.y);
+                const speedMps = (pixDist * mPerPx) / dt;
+                const clamped = Math.max(0, Math.min(speedMps, 85));
+                this.currentSpeedMps = clamped;
+                this.currentSpeedMph = clamped * 2.23694;
                 this.displayedSpeed = this.currentSpeedMph;
-                if(this.currentSpeedMph>18 && !this.shotActive) this.startShot();
-                if(this.shotActive && this.currentSpeedMph>this.shotPeakMph) {
+                if (this.currentSpeedMph > 18 && !this.shotActive) this.startShot();
+                if (this.shotActive && this.currentSpeedMph > this.shotPeakMph) {
                     this.shotPeakMph = this.currentSpeedMph;
-                    if(this.shotPeakMph>this.peakSpeedMph) {
+                    if (this.shotPeakMph > this.peakSpeedMph) {
                         this.peakSpeedMph = this.shotPeakMph;
                         this.updatePeakDisplay();
                         this.triggerPeakEffect();
@@ -895,106 +816,137 @@
 
             updateSpeedDisplay() {
                 const mph = Math.round(this.currentSpeedMph);
-                if(mph<5) this.elements.speedValue.textContent='--';
+                if (mph < 5) this.elements.speedValue.textContent = '--';
                 else this.elements.speedValue.textContent = mph;
             }
 
-            startShot() { this.shotActive=true; this.shotPeakMph=this.currentSpeedMph; }
-            endShot() {
-                this.shotActive=false;
-                if(this.shotPeakMph>10) this.recordShot(this.shotPeakMph);
-                this.shotPeakMph=0;
-                this.elements.cameraWrapper.classList.remove('shot-detected');
-            }
-            recordShot(mph) {
-                this.totalShots++;
-                this.sumSpeeds += mph;
-                this.shotHistory.push({speed:Math.round(mph), time:new Date().toLocaleTimeString()});
-                if(this.shotHistory.length>15) this.shotHistory.shift();
-                this.elements.shotCount.textContent = this.totalShots;
-                this.elements.lastSpeed.textContent = Math.round(mph);
-                const avg = Math.round(this.sumSpeeds/this.totalShots);
-                this.elements.avgSpeed.textContent = avg;
-                this.updateHistoryList();
-            }
-            updateHistoryList() {
-                const list = this.elements.historyList;
-                list.innerHTML = '';
-                if(this.shotHistory.length===0) list.innerHTML = '<span style="color:#555;">No shots yet.</span>';
-                else {
-                    for(let i=this.shotHistory.length-1; i>=0; i--) {
-                        const s = this.shotHistory[i];
-                        const div = document.createElement('div');
-                        div.className = 'history-item';
-                        div.innerHTML = `<span>${s.time}</span> <strong>${s.speed} mph</strong>`;
-                        list.appendChild(div);
-                    }
-                }
-            }
+            startShot() { this.shotActive = true; this.shotPeakMph = this.currentSpeedMph; }
+            endShot() { this.shotActive = false; this.shotPeakMph = 0; this.elements.cameraWrapper.classList.remove('shot-detected'); }
 
             updatePeakDisplay() {
-                this.elements.peakSpeedEl.innerHTML = Math.round(this.peakSpeedMph)+' <sup>mph</sup>';
+                this.elements.peakSpeedEl.innerHTML = Math.round(this.peakSpeedMph) + ' <sup>mph</sup>';
             }
             triggerPeakEffect() {
                 this.elements.cameraWrapper.classList.add('shot-detected');
-                setTimeout(()=> this.elements.cameraWrapper.classList.remove('shot-detected'), 600);
+                setTimeout(() => this.elements.cameraWrapper.classList.remove('shot-detected'), 600);
             }
 
             updateStatusIndicators() {
-                if(this.ballDetected && this.shotActive) {
-                    this.elements.statusDot.className='status-dot tracking';
-                    this.elements.statusText.textContent='Shot!';
-                } else if(this.ballDetected) {
-                    this.elements.statusDot.className='status-dot tracking';
-                    this.elements.statusText.textContent='Tracking';
+                if (this.ballDetected && this.shotActive) {
+                    this.elements.statusDot.className = 'status-dot tracking';
+                    this.elements.statusText.textContent = 'Shot!';
+                } else if (this.ballDetected) {
+                    this.elements.statusDot.className = 'status-dot tracking';
+                    this.elements.statusText.textContent = 'Tracking';
                 } else {
-                    this.elements.statusDot.className='status-dot active';
-                    this.elements.statusText.textContent='Active';
+                    this.elements.statusDot.className = 'status-dot active';
+                    this.elements.statusText.textContent = 'Active';
                 }
             }
 
-            drawOverlay(dx,dy,scale,dispW,dispH) {
-                const ctx=this.displayCtx;
-                if(this.ballPositions.length>1) {
-                    const trail = this.ballPositions.slice(-20);
-                    for(let i=1;i<trail.length;i++) {
-                        const p=trail[i-1], c=trail[i];
-                        const px=dx+(p.x/this.procWidth)*this.elements.video.videoWidth*scale;
-                        const py=dy+(p.y/this.procHeight)*this.elements.video.videoHeight*scale;
-                        const cx=dx+(c.x/this.procWidth)*this.elements.video.videoWidth*scale;
-                        const cy=dy+(c.y/this.procHeight)*this.elements.video.videoHeight*scale;
-                        const alpha=i/trail.length;
-                        ctx.strokeStyle=`rgba(200,224,48,${0.3+alpha*0.7})`;
-                        ctx.lineWidth=2+alpha*3; ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(cx,cy); ctx.stroke();
+            // --- VISUAL OVERLAY with enhanced trail and glow ---
+            drawOverlay(dx, dy, scale, displayW, displayH) {
+                const ctx = this.displayCtx;
+                const trailLen = parseInt(this.elements.trailLength?.value || 20);
+                const glowSize = parseInt(this.elements.circleGlow?.value || 15);
+
+                // Draw glowing trail
+                if (this.ballPositions.length > 1) {
+                    const trail = this.ballPositions.slice(-trailLen);
+                    for (let i = 1; i < trail.length; i++) {
+                        const prev = trail[i - 1];
+                        const curr = trail[i];
+                        const px = dx + (prev.x / this.procWidth) * this.elements.video.videoWidth * scale;
+                        const py = dy + (prev.y / this.procHeight) * this.elements.video.videoHeight * scale;
+                        const cx = dx + (curr.x / this.procWidth) * this.elements.video.videoWidth * scale;
+                        const cy = dy + (curr.y / this.procHeight) * this.elements.video.videoHeight * scale;
+                        const alpha = i / trail.length;
+                        ctx.strokeStyle = `rgba(200,224,48,${0.4 + alpha * 0.6})`;
+                        ctx.lineWidth = 3 + alpha * 4;
+                        ctx.lineCap = 'round';
+                        ctx.shadowColor = '#c8e030';
+                        ctx.shadowBlur = 6 + alpha * 8;
+                        ctx.beginPath();
+                        ctx.moveTo(px, py);
+                        ctx.lineTo(cx, cy);
+                        ctx.stroke();
                     }
+                    ctx.shadowBlur = 0; // reset shadow
                 }
-                if(this.currentBall && this.ballDetected) {
-                    const bx=dx+(this.currentBall.x/this.procWidth)*this.elements.video.videoWidth*scale;
-                    const by=dy+(this.currentBall.y/this.procHeight)*this.elements.video.videoHeight*scale;
-                    const br=(this.currentBall.radius/this.procWidth)*this.elements.video.videoWidth*scale;
-                    ctx.beginPath(); ctx.arc(bx,by,br,0,2*Math.PI);
-                    ctx.strokeStyle='#c8e030'; ctx.lineWidth=3; ctx.shadowColor='#c8e030'; ctx.shadowBlur=12; ctx.stroke();
-                    ctx.shadowBlur=0; ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(bx,by,3,0,2*Math.PI); ctx.fill();
+
+                // Draw the ball with a glowing circle
+                if (this.currentBall && this.ballDetected) {
+                    const bx = dx + (this.currentBall.x / this.procWidth) * this.elements.video.videoWidth * scale;
+                    const by = dy + (this.currentBall.y / this.procHeight) * this.elements.video.videoHeight * scale;
+                    const br = (this.currentBall.radius / this.procWidth) * this.elements.video.videoWidth * scale;
+
+                    // Outer glow
+                    const glowGrad = ctx.createRadialGradient(bx, by, br * 0.5, bx, by, br * 1.8);
+                    glowGrad.addColorStop(0, 'rgba(200,224,48,0.8)');
+                    glowGrad.addColorStop(0.7, 'rgba(200,224,48,0.2)');
+                    glowGrad.addColorStop(1, 'rgba(200,224,48,0)');
+                    ctx.fillStyle = glowGrad;
+                    ctx.beginPath();
+                    ctx.arc(bx, by, br * 1.8, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Main circle
+                    ctx.strokeStyle = '#c8e030';
+                    ctx.lineWidth = 3;
+                    ctx.shadowColor = '#c8e030';
+                    ctx.shadowBlur = glowSize;
+                    ctx.beginPath();
+                    ctx.arc(bx, by, br, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+
+                    // Center dot
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath();
+                    ctx.arc(bx, by, 4, 0, Math.PI * 2);
+                    ctx.fill();
                 }
             }
 
             drawGauge(speedMph) {
-                const canvas=this.elements.gaugeCanvas, ctx=this.gaugeCtx;
-                const w=canvas.width, h=canvas.height; ctx.clearRect(0,0,w,h);
-                const cx=w/2, cy=h/2, r=140, startAngle=Math.PI*0.75, endAngle=Math.PI*2.25, maxSpeed=150;
-                ctx.beginPath(); ctx.arc(cx,cy,r,startAngle,endAngle); ctx.strokeStyle='#2a2a3a'; ctx.lineWidth=24; ctx.stroke();
-                const segs=[{max:50,color:'#4caf50'},{max:80,color:'#ffa502'},{max:110,color:'#ff6b35'},{max:150,color:'#ff4757'}];
-                let prev=startAngle;
-                for(const s of segs){ const a=startAngle+(s.max/maxSpeed)*(endAngle-startAngle); ctx.beginPath(); ctx.arc(cx,cy,r,prev,a); ctx.strokeStyle=s.color; ctx.lineWidth=20; ctx.stroke(); prev=a; }
-                if(this.peakSpeedMph>0){ const pa=startAngle+(Math.min(this.peakSpeedMph,maxSpeed)/maxSpeed)*(endAngle-startAngle); const px=cx+Math.cos(pa)*(r+18), py=cy+Math.sin(pa)*(r+18); ctx.fillStyle='#fff'; ctx.font='bold 16px "Segoe UI"'; ctx.fillText('🏆',px-14,py+6); }
-                const needle=startAngle+(Math.min(speedMph,maxSpeed)/maxSpeed)*(endAngle-startAngle);
-                ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(needle)*(r-30), cy+Math.sin(needle)*(r-30)); ctx.strokeStyle='#fff'; ctx.lineWidth=4; ctx.stroke();
-                ctx.beginPath(); ctx.arc(cx,cy,14,0,2*Math.PI); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle='#888'; ctx.lineWidth=2; ctx.stroke();
+                const canvas = this.elements.gaugeCanvas, ctx = this.gaugeCtx;
+                const w = canvas.width, h = canvas.height;
+                ctx.clearRect(0, 0, w, h);
+                const cx = w / 2, cy = h / 2, r = 140;
+                const startAngle = Math.PI * 0.75, endAngle = Math.PI * 2.25, maxSpeed = 150;
+
+                ctx.beginPath(); ctx.arc(cx, cy, r, startAngle, endAngle);
+                ctx.strokeStyle = '#2a2a3a'; ctx.lineWidth = 24; ctx.stroke();
+
+                const segs = [{ max: 50, color: '#4caf50' }, { max: 80, color: '#ffa502' }, { max: 110, color: '#ff6b35' }, { max: 150, color: '#ff4757' }];
+                let prev = startAngle;
+                for (const s of segs) {
+                    const a = startAngle + (s.max / maxSpeed) * (endAngle - startAngle);
+                    ctx.beginPath(); ctx.arc(cx, cy, r, prev, a);
+                    ctx.strokeStyle = s.color; ctx.lineWidth = 20; ctx.stroke();
+                    prev = a;
+                }
+
+                if (this.peakSpeedMph > 0) {
+                    const pa = startAngle + (Math.min(this.peakSpeedMph, maxSpeed) / maxSpeed) * (endAngle - startAngle);
+                    const px = cx + Math.cos(pa) * (r + 18), py = cy + Math.sin(pa) * (r + 18);
+                    ctx.fillStyle = '#fff'; ctx.font = 'bold 16px "Segoe UI"';
+                    ctx.fillText('🏆', px - 14, py + 6);
+                }
+
+                const needle = startAngle + (Math.min(speedMph, maxSpeed) / maxSpeed) * (endAngle - startAngle);
+                ctx.beginPath(); ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + Math.cos(needle) * (r - 30), cy + Math.sin(needle) * (r - 30));
+                ctx.strokeStyle = '#fff'; ctx.lineWidth = 4; ctx.stroke();
+
+                ctx.beginPath(); ctx.arc(cx, cy, 14, 0, 2 * Math.PI);
+                ctx.fillStyle = '#fff'; ctx.fill();
+                ctx.strokeStyle = '#888'; ctx.lineWidth = 2; ctx.stroke();
             }
 
             // Calibration
             startCalibration() {
-                if(!this.isCameraActive) return;
+                if (!this.isCameraActive) return;
                 this.calibrationMode = true;
                 this.elements.cameraWrapper.classList.add('calibrating');
                 this.elements.statusText.textContent = 'Click on the ball';
@@ -1005,53 +957,85 @@
                 const rect = this.elements.displayCanvas.getBoundingClientRect();
                 const scaleX = this.elements.video.videoWidth / rect.width;
                 const scaleY = this.elements.video.videoHeight / rect.height;
-                const videoX = (e.clientX - rect.left)*scaleX;
-                const videoY = (e.clientY - rect.top)*scaleY;
+                const videoX = (e.clientX - rect.left) * scaleX;
+                const videoY = (e.clientY - rect.top) * scaleY;
                 const tmpCanvas = document.createElement('canvas');
-                tmpCanvas.width=this.elements.video.videoWidth; tmpCanvas.height=this.elements.video.videoHeight;
-                const tmpCtx=tmpCanvas.getContext('2d'); tmpCtx.drawImage(this.elements.video,0,0);
-                const pixel = tmpCtx.getImageData(Math.round(videoX), Math.round(videoY),1,1).data;
-                const [r,g,b]=pixel; const max=Math.max(r,g,b), min=Math.min(r,g,b), delta=max-min;
-                if(delta<5) { alert('Click on the tennis ball.'); return; }
-                let h=0; if(max===r) h=((g-b)/delta)%6; else if(max===g) h=(b-r)/delta+2; else h=(r-g)/delta+4;
-                h=Math.round(h*30); if(h<0) h+=180; const s=Math.round((delta/max)*255), v=max;
-                this.hsvSettings.hueMin=Math.max(0,h-15); this.hsvSettings.hueMax=Math.min(180,h+15);
-                this.hsvSettings.satMin=Math.max(10,s-30); this.hsvSettings.valMin=Math.max(20,v-40);
-                this.updateSettingsUI(); this.endCalibration();
+                tmpCanvas.width = this.elements.video.videoWidth;
+                tmpCanvas.height = this.elements.video.videoHeight;
+                const tmpCtx = tmpCanvas.getContext('2d');
+                tmpCtx.drawImage(this.elements.video, 0, 0);
+                const pixel = tmpCtx.getImageData(Math.round(videoX), Math.round(videoY), 1, 1).data;
+                const [r, g, b] = pixel;
+                const max = Math.max(r, g, b), min = Math.min(r, g, b), delta = max - min;
+                if (delta < 5) { alert('Click on the tennis ball.'); return; }
+                let h = 0;
+                if (max === r) h = ((g - b) / delta) % 6;
+                else if (max === g) h = (b - r) / delta + 2;
+                else h = (r - g) / delta + 4;
+                h = Math.round(h * 30);
+                if (h < 0) h += 180;
+                const s = Math.round((delta / max) * 255);
+                const v = max;
+                this.hsvSettings.hueMin = Math.max(0, h - 15);
+                this.hsvSettings.hueMax = Math.min(180, h + 15);
+                this.hsvSettings.satMin = Math.max(10, s - 30);
+                this.hsvSettings.valMin = Math.max(20, v - 40);
+                this.updateSettingsUI();
+                this.endCalibration();
             }
             endCalibration() {
-                this.calibrationMode=false; this.elements.cameraWrapper.classList.remove('calibrating');
-                this.elements.displayCanvas.style.cursor='';
+                this.calibrationMode = false;
+                this.elements.cameraWrapper.classList.remove('calibrating');
+                this.elements.displayCanvas.style.cursor = '';
                 this.elements.displayCanvas.removeEventListener('click', this.handleCalibrationClick);
-                this.elements.statusText.textContent='Camera Active';
+                this.elements.statusText.textContent = 'Camera Active';
             }
 
             updateSettings() {
-                this.hsvSettings.hueMin = +this.elements.hueMin.value;
-                this.hsvSettings.hueMax = +this.elements.hueMax.value;
-                this.hsvSettings.satMin = +this.elements.satMin.value;
-                this.hsvSettings.valMin = +this.elements.valMin.value;
+                const e = this.elements;
+                this.hsvSettings.hueMin = parseInt(e.hueMin.value);
+                this.hsvSettings.hueMax = parseInt(e.hueMax.value);
+                this.hsvSettings.satMin = parseInt(e.satMin.value);
+                this.hsvSettings.valMin = parseInt(e.valMin.value);
                 this.updateSettingsUI();
             }
             updateSettingsUI() {
-                this.elements.hueMin.value=this.hsvSettings.hueMin; this.elements.hueMax.value=this.hsvSettings.hueMax;
-                this.elements.satMin.value=this.hsvSettings.satMin; this.elements.valMin.value=this.hsvSettings.valMin;
-                this.elements.hueMinVal.textContent=this.hsvSettings.hueMin; this.elements.hueMaxVal.textContent=this.hsvSettings.hueMax;
-                this.elements.satMinVal.textContent=this.hsvSettings.satMin; this.elements.valMinVal.textContent=this.hsvSettings.valMin;
+                const e = this.elements;
+                if (e.hueMin) e.hueMin.value = this.hsvSettings.hueMin;
+                if (e.hueMax) e.hueMax.value = this.hsvSettings.hueMax;
+                if (e.satMin) e.satMin.value = this.hsvSettings.satMin;
+                if (e.valMin) e.valMin.value = this.hsvSettings.valMin;
+                if (e.hueMinVal) e.hueMinVal.textContent = this.hsvSettings.hueMin;
+                if (e.hueMaxVal) e.hueMaxVal.textContent = this.hsvSettings.hueMax;
+                if (e.satMinVal) e.satMinVal.textContent = this.hsvSettings.satMin;
+                if (e.valMinVal) e.valMinVal.textContent = this.hsvSettings.valMin;
+                if (e.trailLengthVal) e.trailLengthVal.textContent = e.trailLength?.value || 20;
+                if (e.circleGlowVal) e.circleGlowVal.textContent = e.circleGlow?.value || 15;
             }
             resetCalibration() {
-                this.hsvSettings = {hueMin:20, hueMax:55, satMin:40, valMin:60}; this.updateSettingsUI();
+                this.hsvSettings = { hueMin: 20, hueMax: 55, satMin: 40, valMin: 60 };
+                this.updateSettingsUI();
             }
             resetPeak() {
-                this.peakSpeedMph=0; this.shotPeakMph=0; this.shotActive=false;
-                this.updatePeakDisplay(); this.elements.speedValue.textContent='--'; this.displayedSpeed=0;
-                this.drawGauge(0); this.ballPositions=[];
+                this.peakSpeedMph = 0;
+                this.shotPeakMph = 0;
+                this.shotActive = false;
+                this.updatePeakDisplay();
+                this.elements.speedValue.textContent = '--';
+                this.displayedSpeed = 0;
+                this.drawGauge(0);
+                this.ballPositions = [];
+                this.elements.cameraWrapper.classList.remove('shot-detected');
             }
-            toggleSettings() { this.elements.settingsPanel.classList.toggle('open'); }
-            handleResize() { if(this.isCameraActive && this.elements.video.videoWidth>0) this.setupCanvasSizes(); }
+            toggleSettings() {
+                this.elements.settingsPanel.classList.toggle('open');
+            }
+            handleResize() {
+                if (this.isCameraActive && this.elements.video.videoWidth > 0) this.setupCanvasSizes();
+            }
         }
 
-        // Wait for DOM, then create the app (no inline handlers used)
+        // Safe initialization after DOM is ready
         window.addEventListener('DOMContentLoaded', () => {
             window.radarApp = new RadarApp();
         });
