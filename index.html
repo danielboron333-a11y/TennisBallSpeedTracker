@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tennis Ball Speed Radar Pro – Enhanced</title>
+    <title>Tennis Ball Speed Radar – Pro+</title>
     <style>
         :root {
             --bg: #0a0a0f;
@@ -17,17 +17,18 @@
             --warning: #ffa502;
             --info: #3742fa;
             --border: #2a2a3a;
-            --radius: 16px;
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --radius: 20px;
+            --shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
         }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: var(--bg);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: radial-gradient(circle at 20% 50%, #0f0f1a, #05050a);
             color: var(--text);
             min-height: 100vh;
             display: flex;
@@ -39,29 +40,30 @@
         }
         .header {
             text-align: center;
-            padding: 20px 16px 10px;
+            padding: 24px 16px 12px;
             width: 100%;
-            max-width: 960px;
+            max-width: 1000px;
         }
         .header h1 {
-            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-size: clamp(1.8rem, 5vw, 2.4rem);
             font-weight: 800;
-            background: linear-gradient(135deg, #c8e030, #8bc34a);
+            background: linear-gradient(135deg, #c8e030 20%, #8bc34a 80%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             letter-spacing: -0.02em;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
         }
         .subtitle {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: var(--text2);
-            margin-top: 4px;
-            letter-spacing: 0.04em;
+            margin-top: 6px;
+            letter-spacing: 0.05em;
         }
         .main-container {
             width: 100%;
-            max-width: 960px;
-            padding: 0 12px 20px;
+            max-width: 1000px;
+            padding: 0 16px 24px;
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -75,19 +77,25 @@
             aspect-ratio: 16/9;
             min-height: 280px;
             border: 2px solid var(--border);
-            transition: border-color 0.3s;
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #0d0d17, #000);
         }
         .camera-wrapper.tracking {
             border-color: var(--accent);
-            box-shadow: 0 0 40px rgba(200, 224, 48, 0.3), var(--shadow);
+            box-shadow: 0 0 45px rgba(200, 224, 48, 0.35), var(--shadow);
         }
         .camera-wrapper.shot-detected {
             border-color: var(--warning);
-            box-shadow: 0 0 60px rgba(255, 165, 2, 0.5), var(--shadow);
+            box-shadow: 0 0 70px rgba(255, 165, 2, 0.6), var(--shadow);
+            animation: pulseBorder 0.5s ease-out;
+        }
+        @keyframes pulseBorder {
+            0%,100% { border-color: var(--warning); }
+            50% { border-color: #ff6b35; }
         }
         .camera-wrapper.calibrating {
             border-color: #fff;
-            box-shadow: 0 0 40px rgba(255,255,255,0.4);
+            box-shadow: 0 0 50px rgba(255,255,255,0.5);
         }
         video {
             display: none;
@@ -97,7 +105,6 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
-            border-radius: var(--radius);
         }
         .camera-overlay {
             position: absolute;
@@ -110,16 +117,17 @@
             z-index: 10;
         }
         .status-badge {
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(12px);
-            padding: 8px 15px;
-            border-radius: 20px;
+            background: rgba(10, 10, 20, 0.8);
+            backdrop-filter: blur(16px);
+            padding: 8px 16px;
+            border-radius: 30px;
             font-size: 0.8rem;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
             border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
         }
         .status-dot {
             width: 10px;
@@ -130,28 +138,35 @@
         }
         .status-dot.active {
             background: #4caf50;
-            box-shadow: 0 0 10px #4caf50;
-            animation: dotPulse 1.5s infinite;
+            box-shadow: 0 0 12px #4caf50;
+            animation: dotPulse 1.2s infinite;
         }
         .status-dot.tracking {
             background: #c8e030;
-            box-shadow: 0 0 12px #c8e030;
+            box-shadow: 0 0 14px #c8e030;
             animation: dotPulse 0.7s infinite;
         }
         @keyframes dotPulse {
             0%,100% { box-shadow: 0 0 8px currentColor; }
-            50% { box-shadow: 0 0 18px currentColor, 0 0 30px currentColor; }
+            50% { box-shadow: 0 0 22px currentColor, 0 0 36px currentColor; }
         }
         .fps-badge {
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(12px);
-            padding: 6px 12px;
+            background: rgba(10, 10, 20, 0.8);
+            backdrop-filter: blur(16px);
+            padding: 6px 14px;
             border-radius: 16px;
             font-size: 0.7rem;
             font-weight: 500;
-            color: #aaa;
-            border: 1px solid rgba(255,255,255,0.15);
+            color: #ccc;
+            border: 1px solid rgba(255,255,255,0.2);
             pointer-events: auto;
+        }
+
+        .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
         }
         .speed-panel {
             display: flex;
@@ -159,6 +174,7 @@
             flex-wrap: wrap;
             align-items: center;
             justify-content: center;
+            flex: 1 1 300px;
         }
         .gauge-container {
             position: relative;
@@ -179,39 +195,66 @@
             transform: translate(-50%, -50%);
             text-align: center;
             z-index: 2;
+            pointer-events: none;
         }
         .speed-value {
-            font-size: 2.8rem;
+            font-size: 2.6rem;
             font-weight: 900;
             line-height: 1;
             color: #fff;
+            text-shadow: 0 0 15px rgba(255,255,255,0.3);
             transition: color 0.3s;
         }
         .speed-unit {
             font-size: 0.85rem;
             font-weight: 500;
             color: var(--text2);
-            margin-top: -2px;
         }
-        .peak-speed {
-            text-align: center;
+        .peak-panel {
             background: var(--surface2);
-            border-radius: 14px;
-            padding: 14px 20px;
+            border-radius: 18px;
+            padding: 16px 22px;
             border: 1px solid var(--border);
-            min-width: 120px;
+            text-align: center;
+            backdrop-filter: blur(10px);
         }
-        .peak-speed .label {
+        .peak-panel .label {
             font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.1em;
             color: var(--text2);
         }
-        .peak-speed .value {
-            font-size: 2rem;
+        .peak-panel .value {
+            font-size: 2.2rem;
             font-weight: 700;
             color: #ffa502;
         }
+        .stats-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .stat-card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 12px 20px;
+            border: 1px solid var(--border);
+            text-align: center;
+            min-width: 80px;
+        }
+        .stat-card .num {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .stat-card .desc {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text2);
+        }
+
         .controls {
             display: flex;
             gap: 8px;
@@ -220,8 +263,8 @@
             align-items: center;
         }
         button, select {
-            padding: 12px 20px;
-            border-radius: 28px;
+            padding: 12px 22px;
+            border-radius: 30px;
             border: none;
             font-size: 0.85rem;
             font-weight: 600;
@@ -234,15 +277,17 @@
             border: 1.5px solid var(--border);
             transition: all 0.25s;
             outline: none;
+            backdrop-filter: blur(8px);
         }
         button:hover, select:hover {
             background: #252540;
-            border-color: #555;
+            border-color: #666;
+            transform: translateY(-1px);
         }
         .btn-primary {
             background: var(--accent);
             color: #1a1a00;
-            box-shadow: 0 4px 16px rgba(200,224,48,0.3);
+            box-shadow: 0 6px 20px rgba(200,224,48,0.35);
             border: none;
         }
         .btn-primary:hover {
@@ -251,8 +296,8 @@
         .btn-calibrate {
             background: #4a4aff;
             color: #fff;
+            box-shadow: 0 6px 20px rgba(74,74,255,0.4);
             border: none;
-            box-shadow: 0 4px 16px rgba(74,74,255,0.3);
         }
         .btn-calibrate:hover {
             background: #5d5dff;
@@ -271,34 +316,30 @@
             pointer-events: none;
         }
         select {
-            padding-right: 36px;
+            padding-right: 40px;
             background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M7 10l5 5 5-5z"/></svg>');
             background-repeat: no-repeat;
-            background-position: right 12px center;
+            background-position: right 14px center;
             appearance: none;
         }
+
         .settings-panel {
             background: var(--surface);
             border-radius: var(--radius);
-            padding: 16px 18px;
+            padding: 16px 20px;
             border: 1px solid var(--border);
             display: none;
             flex-direction: column;
             gap: 12px;
+            backdrop-filter: blur(12px);
         }
         .settings-panel.open {
             display: flex;
         }
-        .settings-panel h3 {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--text2);
-        }
         .setting-row {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
         }
         .setting-row label {
@@ -313,7 +354,7 @@
         }
         .range-val {
             font-size: 0.75rem;
-            color: #999;
+            color: #aaa;
             min-width: 32px;
             text-align: center;
         }
@@ -322,12 +363,35 @@
             color: #777;
             font-style: italic;
         }
+
+        .history-panel {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 16px;
+            border: 1px solid var(--border);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .history-panel h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text2);
+            margin-bottom: 8px;
+        }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #222;
+            font-size: 0.8rem;
+        }
         .info-banner {
             background: var(--surface2);
-            border-radius: 12px;
-            padding: 12px 16px;
-            font-size: 0.78rem;
-            color: #999;
+            border-radius: 14px;
+            padding: 14px 18px;
+            font-size: 0.8rem;
+            color: #aaa;
             text-align: center;
             border: 1px solid var(--border);
             line-height: 1.5;
@@ -336,12 +400,12 @@
 </head>
 <body>
     <div class="header">
-        <h1>🎾 Ball Speed Radar Pro</h1>
-        <p class="subtitle">Advanced color calibration · Kalman tracking · Live gauge</p>
+        <h1>🎾 Ball Speed Radar Pro+</h1>
+        <p class="subtitle">Kalman tracking · Live gauge · Color calibration · Shot history</p>
     </div>
 
     <div class="main-container">
-        <!-- Camera viewport -->
+        <!-- Camera View -->
         <div class="camera-wrapper" id="cameraWrapper">
             <video id="video" playsinline autoplay muted></video>
             <canvas id="displayCanvas"></canvas>
@@ -354,36 +418,52 @@
             </div>
         </div>
 
-        <!-- Speedometer and peak display -->
-        <div class="speed-panel">
-            <div class="gauge-container" id="gaugeContainer">
-                <canvas id="gaugeCanvas" width="360" height="360"></canvas>
-                <div class="digital-speed">
-                    <div class="speed-value" id="speedValue">--</div>
-                    <div class="speed-unit">MPH</div>
+        <!-- Dashboard: Gauge + Peak + Stats -->
+        <div class="dashboard">
+            <div class="speed-panel">
+                <div class="gauge-container" id="gaugeContainer">
+                    <canvas id="gaugeCanvas" width="360" height="360"></canvas>
+                    <div class="digital-speed">
+                        <div class="speed-value" id="speedValue">--</div>
+                        <div class="speed-unit">MPH</div>
+                    </div>
+                </div>
+                <div class="peak-panel">
+                    <div class="label">🏆 Peak Speed</div>
+                    <div class="value" id="peakSpeed">0 <sup>mph</sup></div>
                 </div>
             </div>
-            <div class="peak-speed">
-                <div class="label">🏆 Peak Speed</div>
-                <div class="value" id="peakSpeed">0 <sup>mph</sup></div>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="num" id="shotCount">0</div>
+                    <div class="desc">Shots</div>
+                </div>
+                <div class="stat-card">
+                    <div class="num" id="avgSpeed">--</div>
+                    <div class="desc">Avg mph</div>
+                </div>
+                <div class="stat-card">
+                    <div class="num" id="lastSpeed">--</div>
+                    <div class="desc">Last mph</div>
+                </div>
             </div>
         </div>
 
-        <!-- Action buttons -->
+        <!-- Controls -->
         <div class="controls">
             <button class="btn-primary" id="btnStart">📷 Start Camera</button>
             <button id="btnCalibrate" class="btn-calibrate" disabled>🎯 Calibrate Color</button>
-            <button id="btnSwitchCam" disabled>🔄 Switch Camera</button>
+            <button id="btnSwitchCam" disabled>🔄 Switch</button>
             <select id="qualitySelect" disabled>
                 <option value="low">30 fps</option>
                 <option value="medium" selected>60 fps</option>
                 <option value="high">Max fps</option>
             </select>
-            <button id="btnSettings">⚙️ Settings</button>
-            <button class="btn-danger" id="btnReset">↺ Reset Peak</button>
+            <button id="btnSettings">⚙️ Tuning</button>
+            <button class="btn-danger" id="btnReset">↺ Reset</button>
         </div>
 
-        <!-- Manual HSV tuning panel -->
+        <!-- HSV Settings -->
         <div class="settings-panel" id="settingsPanel">
             <h3>HSV Color Tuning</h3>
             <div class="setting-row">
@@ -406,24 +486,31 @@
                 <input type="range" id="valMin" min="0" max="255" value="60">
                 <span class="range-val" id="valMinVal">60</span>
             </div>
-            <button id="btnResetCalibration" style="width:fit-content; margin-top:4px;">↩ Reset to default</button>
+            <button id="btnResetCalibration" style="width:fit-content;">↩ Reset to default</button>
             <p class="setting-hint">Manual tuning · Or click 🎯 Calibrate and tap the ball.</p>
+        </div>
+
+        <!-- Shot History -->
+        <div class="history-panel" id="historyPanel">
+            <h3>📋 Recent Shots (mph)</h3>
+            <div id="historyList">
+                <span style="color:#555;">No shots recorded yet.</span>
+            </div>
         </div>
 
         <div class="info-banner">
             <strong>💡 Pro tips:</strong> For long shots, use <strong>Calibrate Color</strong> on the ball · 
-            Best at <strong>60fps</strong> · Side‑on view works best · Ball diameter (6.7cm) used for scale.
+            Best at <strong>60fps</strong> · Side‑on view · Ball diameter (6.7cm) used for scale.
         </div>
     </div>
 
     <script>
         // ----------------------------------------------------------------------
-        // Main application class – Tennis Ball Speed Radar Pro
+        // Tennis Ball Speed Radar Pro+ – fully event‑driven, no inline handlers
         // ----------------------------------------------------------------------
-        class TennisBallRadarPro {
+        class RadarApp {
             constructor() {
-                // Attempt to grab all required DOM elements. If any are missing, the app
-                // will show an error and disable itself gracefully.
+                // Grab all DOM elements (safe – only called after DOMContentLoaded)
                 this.elements = {
                     video: document.getElementById('video'),
                     displayCanvas: document.getElementById('displayCanvas'),
@@ -434,12 +521,15 @@
                     fpsDisplay: document.getElementById('fpsDisplay'),
                     speedValue: document.getElementById('speedValue'),
                     peakSpeedEl: document.getElementById('peakSpeed'),
+                    shotCount: document.getElementById('shotCount'),
+                    avgSpeed: document.getElementById('avgSpeed'),
+                    lastSpeed: document.getElementById('lastSpeed'),
+                    historyList: document.getElementById('historyList'),
                     btnStart: document.getElementById('btnStart'),
                     btnCalibrate: document.getElementById('btnCalibrate'),
                     btnSwitchCam: document.getElementById('btnSwitchCam'),
                     qualitySelect: document.getElementById('qualitySelect'),
                     settingsPanel: document.getElementById('settingsPanel'),
-                    // Manual HSV sliders
                     hueMin: document.getElementById('hueMin'),
                     hueMax: document.getElementById('hueMax'),
                     satMin: document.getElementById('satMin'),
@@ -450,13 +540,12 @@
                     valMinVal: document.getElementById('valMinVal'),
                 };
 
-                // Verify all critical elements exist; otherwise abort initialization.
-                if (!this.validateElements()) {
-                    console.error('Radar: missing DOM elements. Aborting.');
+                // Verify critical elements exist
+                if (!this.elements.video || !this.elements.displayCanvas || !this.elements.gaugeCanvas) {
+                    console.error('RadarApp: Critical DOM elements missing. Aborting.');
                     return;
                 }
 
-                // Internal canvases
                 this.displayCtx = this.elements.displayCanvas.getContext('2d');
                 this.gaugeCtx = this.elements.gaugeCanvas.getContext('2d');
                 this.procCanvas = document.createElement('canvas');
@@ -464,89 +553,54 @@
                 this.procWidth = 640;
                 this.procHeight = 360;
 
-                // State variables
+                // State
                 this.stream = null;
-                this.facingMode = 'environment'; // rear camera preferred
+                this.facingMode = 'environment';
                 this.isCameraActive = false;
                 this.isProcessing = false;
                 this.animationId = null;
                 this.calibrationMode = false;
 
-                // Ball tracking data
-                this.ballPositions = [];          // historical positions for speed calc
+                this.ballPositions = [];
                 this.maxTrackHistory = 30;
                 this.ballDetected = false;
-                this.currentBall = null;          // latest detection result
-                this.trackedBall = null;          // persistent smoothed position (Kalman)
+                this.currentBall = null;
+                this.trackedBall = null;
 
-                // Speed measurement
                 this.currentSpeedMps = 0;
                 this.currentSpeedMph = 0;
-                this.displayedSpeed = 0;          // animated gauge needle
+                this.displayedSpeed = 0;
                 this.peakSpeedMph = 0;
                 this.shotActive = false;
                 this.shotPeakMph = 0;
                 this.framesSinceLastDetection = 0;
 
-                // Color detection settings (HSV)
-                this.hsvSettings = {
-                    hueMin: 20,
-                    hueMax: 55,
-                    satMin: 40,
-                    valMin: 60,
-                };
-
-                // Known tennis ball diameter in meters (standard)
+                this.hsvSettings = { hueMin: 20, hueMax: 55, satMin: 40, valMin: 60 };
                 this.ballDiameterMeters = 0.067;
 
-                // Performance monitoring
                 this.lastFrameTime = performance.now();
-                this.fps = 0;
-                this.fpsCounter = 0;
-                this.fpsTimer = performance.now();
+                this.fps = 0; this.fpsCounter = 0; this.fpsTimer = performance.now();
+                this.quality = 'medium';
 
-                // Quality / frame rate
-                this.quality = 'medium'; // default 60fps
+                // Kalman state
+                this.kalman = { x:0, y:0, vx:0, vy:0, P:[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]], Q:0.01, R:5, lastTime:null };
 
-                // Kalman filter state for ball position smoothing
-                this.kalman = {
-                    x: 0, y: 0, vx: 0, vy: 0,
-                    P: [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]],
-                    Q: 0.01, R: 5, lastTime: null,
-                };
+                // History & stats
+                this.shotHistory = [];   // { speed, timestamp }
+                this.totalShots = 0;
+                this.sumSpeeds = 0;
 
-                // Bind methods to preserve context
+                // Bind methods
                 this.processFrame = this.processFrame.bind(this);
                 this.handleCalibrationClick = this.handleCalibrationClick.bind(this);
 
-                // Attach event listeners
+                // Attach all event listeners (no inline onclick in HTML)
                 this.attachEvents();
-                // Initialize UI
                 this.updateSettingsUI();
             }
 
             // ---------------------------------------------------------------
-            // Validate that all required DOM elements were found.
-            // Returns false if any critical element is missing.
-            // ---------------------------------------------------------------
-            validateElements() {
-                const required = [
-                    'video', 'displayCanvas', 'gaugeCanvas', 'cameraWrapper',
-                    'statusDot', 'statusText', 'fpsDisplay', 'speedValue', 'peakSpeedEl',
-                    'btnStart', 'btnCalibrate', 'btnSwitchCam', 'qualitySelect',
-                    'settingsPanel', 'hueMin', 'hueMax', 'satMin', 'valMin'
-                ];
-                for (const key of required) {
-                    if (!this.elements[key]) {
-                        console.error(`Missing element: ${key}`);
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            // ---------------------------------------------------------------
-            // Attach all UI event listeners
+            // Event wiring (replaces all inline onclick)
             // ---------------------------------------------------------------
             attachEvents() {
                 this.elements.btnStart.addEventListener('click', () => this.startCamera());
@@ -556,49 +610,39 @@
                 this.elements.btnSettings.addEventListener('click', () => this.toggleSettings());
                 this.elements.btnReset.addEventListener('click', () => this.resetPeak());
                 document.getElementById('btnResetCalibration').addEventListener('click', () => this.resetCalibration());
-                // HSV sliders
                 ['hueMin','hueMax','satMin','valMin'].forEach(id => {
                     this.elements[id].addEventListener('input', () => this.updateSettings());
                 });
-                // Window resize / orientation
-                window.addEventListener('resize', () => {
-                    clearTimeout(this._resizeTimer);
-                    this._resizeTimer = setTimeout(() => this.handleResize(), 250);
-                });
-                window.addEventListener('orientationchange', () => {
-                    setTimeout(() => this.handleResize(), 500);
-                });
+                window.addEventListener('resize', this.debounce(() => this.handleResize(), 200));
+                window.addEventListener('orientationchange', () => setTimeout(() => this.handleResize(), 500));
+            }
+
+            debounce(fn, delay) {
+                let timer;
+                return (...args) => {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => fn.apply(this, args), delay);
+                };
             }
 
             // ---------------------------------------------------------------
-            // Camera handling
+            // Camera lifecycle
             // ---------------------------------------------------------------
             async startCamera() {
-                if (this.isCameraActive) {
-                    this.stopCamera();
-                    return;
-                }
+                if (this.isCameraActive) { this.stopCamera(); return; }
                 try {
                     const constraints = this.getVideoConstraints();
                     this.stream = await navigator.mediaDevices.getUserMedia(constraints);
                     this.elements.video.srcObject = this.stream;
                     await this.elements.video.play();
-
-                    // Wait for video metadata to ensure dimensions are ready
-                    await new Promise((resolve) => {
-                        if (this.elements.video.videoWidth > 0) {
-                            resolve();
-                        } else {
-                            this.elements.video.addEventListener('loadedmetadata', resolve, { once: true });
-                        }
+                    await new Promise(resolve => {
+                        if (this.elements.video.videoWidth > 0) resolve();
+                        else this.elements.video.addEventListener('loadedmetadata', resolve, { once: true });
                     });
-
                     this.setupCanvasSizes();
                     this.isCameraActive = true;
                     this.isProcessing = true;
                     this.calibrationMode = false;
-
-                    // Update UI state
                     this.elements.statusDot.className = 'status-dot active';
                     this.elements.statusText.textContent = 'Camera Active';
                     this.elements.btnStart.innerHTML = '⏹ Stop';
@@ -608,15 +652,14 @@
                     this.elements.btnSwitchCam.disabled = false;
                     this.elements.qualitySelect.disabled = false;
                     this.elements.cameraWrapper.classList.add('tracking');
-
                     this.resetTracking();
                     this.lastFrameTime = performance.now();
                     this.fpsTimer = performance.now();
                     this.fpsCounter = 0;
                     this.processFrame();
                 } catch (err) {
-                    console.error('Camera error:', err);
-                    alert('Camera access failed: ' + err.message);
+                    console.error(err);
+                    alert('Camera error: ' + err.message);
                     this.stopCamera();
                 }
             }
@@ -624,21 +667,10 @@
             stopCamera() {
                 this.isProcessing = false;
                 this.isCameraActive = false;
-                if (this.animationId) {
-                    cancelAnimationFrame(this.animationId);
-                    this.animationId = null;
-                }
-                if (this.stream) {
-                    this.stream.getTracks().forEach(track => track.stop());
-                    this.stream = null;
-                }
+                if (this.animationId) cancelAnimationFrame(this.animationId);
+                if (this.stream) { this.stream.getTracks().forEach(t => t.stop()); this.stream = null; }
                 this.elements.video.srcObject = null;
-
-                // Clear display canvas
-                const ctx = this.displayCtx;
-                ctx.clearRect(0, 0, this.elements.displayCanvas.width, this.elements.displayCanvas.height);
-
-                // Reset UI
+                this.displayCtx.clearRect(0,0,this.elements.displayCanvas.width, this.elements.displayCanvas.height);
                 this.elements.statusDot.className = 'status-dot';
                 this.elements.statusText.textContent = 'Camera Off';
                 this.elements.btnStart.innerHTML = '📷 Start Camera';
@@ -647,88 +679,52 @@
                 this.elements.btnCalibrate.disabled = true;
                 this.elements.btnSwitchCam.disabled = true;
                 this.elements.qualitySelect.disabled = true;
-                this.elements.cameraWrapper.classList.remove('tracking', 'shot-detected', 'calibrating');
+                this.elements.cameraWrapper.classList.remove('tracking','shot-detected','calibrating');
                 this.elements.speedValue.textContent = '--';
                 this.displayedSpeed = 0;
                 this.drawGauge(0);
-                this.ballDetected = false;
-                this.trackedBall = null;
-                this.ballPositions = [];
+                this.ballDetected = false; this.trackedBall = null; this.ballPositions = [];
             }
 
             getVideoConstraints() {
-                const base = {
-                    video: {
-                        facingMode: this.facingMode,
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 },
-                    },
-                    audio: false,
-                };
-                switch (this.quality) {
-                    case 'low':
-                        base.video.frameRate = { ideal: 30, max: 30 };
-                        break;
-                    case 'high':
-                        base.video.frameRate = { ideal: 120, min: 60 };
-                        break;
-                    default: // medium
-                        base.video.frameRate = { ideal: 60, min: 30 };
-                }
+                const base = { video: { facingMode: this.facingMode, width:{ideal:1280}, height:{ideal:720} }, audio:false };
+                if (this.quality === 'low') base.video.frameRate = {ideal:30, max:30};
+                else if (this.quality === 'high') base.video.frameRate = {ideal:120, min:60};
+                else base.video.frameRate = {ideal:60, min:30};
                 return base;
             }
 
-            changeQuality(value) {
-                this.quality = value;
-                if (this.isCameraActive) {
-                    this.stopCamera();
-                    setTimeout(() => this.startCamera(), 300);
-                }
+            changeQuality(val) {
+                this.quality = val;
+                if (this.isCameraActive) { this.stopCamera(); setTimeout(() => this.startCamera(), 300); }
             }
 
             async switchCamera() {
                 this.facingMode = this.facingMode === 'environment' ? 'user' : 'environment';
-                if (this.isCameraActive) {
-                    this.stopCamera();
-                    await new Promise(r => setTimeout(r, 300));
-                    await this.startCamera();
-                }
+                if (this.isCameraActive) { this.stopCamera(); await new Promise(r => setTimeout(r,300)); await this.startCamera(); }
             }
 
             setupCanvasSizes() {
-                const vw = this.elements.video.videoWidth;
-                const vh = this.elements.video.videoHeight;
-                const wrapperRect = this.elements.cameraWrapper.getBoundingClientRect();
-                const displayWidth = wrapperRect.width;
-                const displayHeight = wrapperRect.height;
-                const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-                this.elements.displayCanvas.width = displayWidth * dpr;
-                this.elements.displayCanvas.height = displayHeight * dpr;
-                this.elements.displayCanvas.style.width = displayWidth + 'px';
-                this.elements.displayCanvas.style.height = displayHeight + 'px';
-                this.displayCtx.setTransform(1, 0, 0, 1, 0, 0);
+                const vw = this.elements.video.videoWidth, vh = this.elements.video.videoHeight;
+                const rect = this.elements.cameraWrapper.getBoundingClientRect();
+                const dw = rect.width, dh = rect.height;
+                const dpr = Math.min(window.devicePixelRatio||1, 2);
+                this.elements.displayCanvas.width = dw * dpr;
+                this.elements.displayCanvas.height = dh * dpr;
+                this.elements.displayCanvas.style.width = dw + 'px';
+                this.elements.displayCanvas.style.height = dh + 'px';
+                this.displayCtx.setTransform(1,0,0,1,0,0);
                 this.displayCtx.scale(dpr, dpr);
-
-                const aspect = vw / vh;
+                const aspect = vw/vh;
                 this.procWidth = Math.min(640, vw);
-                this.procHeight = Math.round(this.procWidth / aspect);
+                this.procHeight = Math.round(this.procWidth/aspect);
                 this.procCanvas.width = this.procWidth;
                 this.procCanvas.height = this.procHeight;
             }
 
             resetTracking() {
-                this.ballPositions = [];
-                this.trackedBall = null;
-                this.ballDetected = false;
-                this.currentBall = null;
-                this.shotActive = false;
-                // Reset Kalman filter
-                this.kalman = {
-                    x: 0, y: 0, vx: 0, vy: 0,
-                    P: [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]],
-                    Q: 0.01, R: 5, lastTime: null,
-                };
+                this.ballPositions = []; this.trackedBall = null; this.ballDetected = false; this.currentBall = null;
+                this.kalman = { x:0, y:0, vx:0, vy:0, P:[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]], Q:0.01, R:5, lastTime:null };
             }
 
             // ---------------------------------------------------------------
@@ -738,65 +734,40 @@
                 if (!this.isProcessing) return;
                 this.animationId = requestAnimationFrame(this.processFrame);
 
-                // FPS calculation
                 this.fpsCounter++;
                 if (timestamp - this.fpsTimer >= 1000) {
                     this.fps = Math.round(this.fpsCounter / ((timestamp - this.fpsTimer) / 1000));
-                    this.fpsCounter = 0;
-                    this.fpsTimer = timestamp;
+                    this.fpsCounter = 0; this.fpsTimer = timestamp;
                     this.elements.fpsDisplay.textContent = this.fps + ' FPS';
                 }
-
-                // Don't process if calibration mode is active
                 if (this.calibrationMode) return;
-
                 if (this.elements.video.readyState < 2 || this.elements.video.videoWidth === 0) return;
 
-                const displayW = this.elements.displayCanvas.width / (Math.min(window.devicePixelRatio || 1, 2));
-                const displayH = this.elements.displayCanvas.height / (Math.min(window.devicePixelRatio || 1, 2));
-                this.displayCtx.clearRect(0, 0, displayW, displayH);
+                const displayW = this.elements.displayCanvas.width / (Math.min(window.devicePixelRatio||1, 2));
+                const displayH = this.elements.displayCanvas.height / (Math.min(window.devicePixelRatio||1, 2));
+                this.displayCtx.clearRect(0,0,displayW,displayH);
+                const vw = this.elements.video.videoWidth, vh = this.elements.video.videoHeight;
+                const scale = Math.min(displayW/vw, displayH/vh);
+                const dx = (displayW - vw*scale)/2, dy = (displayH - vh*scale)/2;
+                this.displayCtx.drawImage(this.elements.video, dx, dy, vw*scale, vh*scale);
 
-                const vw = this.elements.video.videoWidth;
-                const vh = this.elements.video.videoHeight;
-                const scale = Math.min(displayW / vw, displayH / vh);
-                const dx = (displayW - vw * scale) / 2;
-                const dy = (displayH - vh * scale) / 2;
-                this.displayCtx.drawImage(this.elements.video, dx, dy, vw * scale, vh * scale);
-
-                // Detect ball in reduced-resolution processing canvas
-                this.procCtx.drawImage(this.elements.video, 0, 0, this.procWidth, this.procHeight);
-                const imageData = this.procCtx.getImageData(0, 0, this.procWidth, this.procHeight);
+                this.procCtx.drawImage(this.elements.video, 0,0, this.procWidth, this.procHeight);
+                const imageData = this.procCtx.getImageData(0,0,this.procWidth, this.procHeight);
                 const rawBall = this.detectBallAdvanced(imageData.data, this.procWidth, this.procHeight);
 
                 if (rawBall) {
-                    // Apply Kalman filter for smoother tracking
                     const filtered = this.applyKalmanFilter(rawBall, timestamp);
                     this.currentBall = filtered;
                     this.ballDetected = true;
                     this.framesSinceLastDetection = 0;
-
-                    // Store position for speed calculation
-                    this.ballPositions.push({
-                        x: filtered.x,
-                        y: filtered.y,
-                        radius: rawBall.radius, // use raw radius for scale
-                        timestamp: timestamp,
-                    });
-                    while (this.ballPositions.length > this.maxTrackHistory) {
-                        this.ballPositions.shift();
-                    }
-                    if (this.ballPositions.length >= 2) {
-                        this.calculateSpeed();
-                    }
+                    this.ballPositions.push({ x: filtered.x, y: filtered.y, radius: rawBall.radius, timestamp });
+                    while (this.ballPositions.length > this.maxTrackHistory) this.ballPositions.shift();
+                    if (this.ballPositions.length >= 2) this.calculateSpeed();
                 } else {
                     this.framesSinceLastDetection++;
                     if (this.framesSinceLastDetection > 10) {
-                        this.ballDetected = false;
-                        this.currentBall = null;
-                        this.ballPositions = [];
-                        if (this.shotActive && this.framesSinceLastDetection > 20) {
-                            this.endShot();
-                        }
+                        this.ballDetected = false; this.currentBall = null; this.ballPositions = [];
+                        if (this.shotActive && this.framesSinceLastDetection > 20) this.endShot();
                     }
                 }
 
@@ -805,235 +776,115 @@
                 this.drawGauge(this.displayedSpeed);
             }
 
-            // ---------------------------------------------------------------
-            // Ball detection using color thresholding and blob analysis
-            // ---------------------------------------------------------------
+            // Advanced detection (color + blob + proximity scoring)
             detectBallAdvanced(pixels, width, height) {
-                const { hueMin, hueMax, satMin, valMin } = this.hsvSettings;
-                const stride = 2; // process every other pixel for performance
-                const mw = Math.floor(width / stride);
-                const mh = Math.floor(height / stride);
-                const mask = new Uint8Array(mw * mh);
-
-                // Create binary mask of yellow-green pixels
-                for (let y = 0; y < height; y += stride) {
-                    for (let x = 0; x < width; x += stride) {
-                        const idx = (y * width + x) * 4;
-                        const r = pixels[idx], g = pixels[idx + 1], b = pixels[idx + 2];
-                        const max = Math.max(r, g, b), min = Math.min(r, g, b);
-                        const delta = max - min;
-                        if (delta < 1) continue;
-
-                        let h = 0;
-                        if (max === r) h = ((g - b) / delta) % 6;
-                        else if (max === g) h = (b - r) / delta + 2;
-                        else h = (r - g) / delta + 4;
-                        h = Math.round(h * 30); // 0-180 range
-                        if (h < 0) h += 180;
-                        const s = Math.round((delta / max) * 255);
-                        const v = max;
-
-                        if (h >= hueMin && h <= hueMax && s >= satMin && v >= valMin) {
-                            mask[Math.floor(y / stride) * mw + Math.floor(x / stride)] = 1;
+                const {hueMin, hueMax, satMin, valMin} = this.hsvSettings;
+                const stride = 2;
+                const mw = Math.floor(width/stride), mh = Math.floor(height/stride);
+                const mask = new Uint8Array(mw*mh);
+                for (let y=0; y<height; y+=stride) {
+                    for (let x=0; x<width; x+=stride) {
+                        const idx = (y*width+x)*4;
+                        const r=pixels[idx], g=pixels[idx+1], b=pixels[idx+2];
+                        const max=Math.max(r,g,b), min=Math.min(r,g,b), delta=max-min;
+                        if (delta<1) continue;
+                        let h=0;
+                        if(max===r) h=((g-b)/delta)%6; else if(max===g) h=(b-r)/delta+2; else h=(r-g)/delta+4;
+                        h=Math.round(h*30); if(h<0) h+=180;
+                        const s=Math.round((delta/max)*255), v=max;
+                        if(h>=hueMin && h<=hueMax && s>=satMin && v>=valMin) {
+                            mask[Math.floor(y/stride)*mw + Math.floor(x/stride)] = 1;
                         }
                     }
                 }
-
                 const blobs = this.labelBlobs(mask, mw, mh, stride);
-                let bestBlob = null;
-                let bestScore = -Infinity;
-
+                let best = null, bestScore = -Infinity;
                 for (const blob of blobs) {
-                    if (blob.points.length < 6) continue; // require at least a few pixels
-                    const cx = blob.cx, cy = blob.cy, radius = blob.radius;
-                    if (radius < 2 || radius > 70) continue; // realistic size range
-
-                    // Scoring: size, circularity, and proximity to previous position
-                    let proximityScore = 0;
+                    if (blob.points.length < 6) continue;
+                    if (blob.radius<2 || blob.radius>70) continue;
+                    let proximity = 0;
                     if (this.trackedBall) {
-                        const dist = Math.hypot(cx - this.trackedBall.x, cy - this.trackedBall.y);
-                        if (dist < 50) proximityScore = 40;
-                        else if (dist < 100) proximityScore = 15;
+                        const dist = Math.hypot(blob.cx-this.trackedBall.x, blob.cy-this.trackedBall.y);
+                        if(dist<50) proximity=40; else if(dist<100) proximity=15;
                     }
-                    const sizeScore = blob.points.length * 0.2;
-                    const circScore = blob.circularity * 30;
-                    const score = sizeScore + circScore + proximityScore;
-
-                    if (score > bestScore) {
-                        bestScore = score;
-                        bestBlob = { x: cx, y: cy, radius: radius };
-                    }
+                    const score = blob.points.length*0.2 + blob.circularity*30 + proximity;
+                    if(score>bestScore) { bestScore=score; best={x:blob.cx, y:blob.cy, radius:blob.radius}; }
                 }
-                return bestBlob;
+                return best;
             }
 
-            // Connected-component labeling to extract blobs
             labelBlobs(mask, mw, mh, stride) {
-                const labels = new Int32Array(mw * mh).fill(0);
-                const parent = [0];
-                let nextLabel = 1;
-
-                const find = (x) => {
-                    while (parent[x] !== x) {
-                        parent[x] = parent[parent[x]];
-                        x = parent[x];
-                    }
-                    return x;
-                };
-                const union = (a, b) => {
-                    a = find(a);
-                    b = find(b);
-                    if (a !== b) parent[b] = a;
-                };
-
-                // First pass
-                for (let y = 0; y < mh; y++) {
-                    for (let x = 0; x < mw; x++) {
-                        if (!mask[y * mw + x]) continue;
-                        const idx = y * mw + x;
-                        const left = (x > 0) ? labels[idx - 1] : 0;
-                        const up = (y > 0) ? labels[idx - mw] : 0;
-                        if (!left && !up) {
-                            parent[nextLabel] = nextLabel;
-                            labels[idx] = nextLabel++;
-                        } else if (left && !up) {
-                            labels[idx] = left;
-                        } else if (!left && up) {
-                            labels[idx] = up;
-                        } else {
-                            labels[idx] = left;
-                            union(left, up);
-                        }
+                const labels = new Int32Array(mw*mh).fill(0);
+                const parent = [0]; let nextLabel=1;
+                const find = (x)=>{ while(parent[x]!==x){parent[x]=parent[parent[x]]; x=parent[x];} return x; };
+                const union = (a,b)=>{ a=find(a); b=find(b); if(a!==b) parent[b]=a; };
+                for(let y=0; y<mh; y++) {
+                    for(let x=0; x<mw; x++) {
+                        if(!mask[y*mw+x]) continue;
+                        const idx = y*mw+x;
+                        const left = x>0? labels[idx-1]:0;
+                        const up = y>0? labels[idx-mw]:0;
+                        if(!left && !up) { parent[nextLabel]=nextLabel; labels[idx]=nextLabel++; }
+                        else if(left && !up) labels[idx]=left;
+                        else if(!left && up) labels[idx]=up;
+                        else { labels[idx]=left; union(left,up); }
                     }
                 }
-
-                // Second pass: resolve equivalences
-                for (let i = 0; i < labels.length; i++) {
-                    if (labels[i] !== 0) {
-                        labels[i] = find(labels[i]);
-                    }
-                }
-
-                // Collect blobs
+                for(let i=0;i<labels.length;i++) if(labels[i]) labels[i]=find(labels[i]);
                 const blobsMap = {};
-                for (let y = 0; y < mh; y++) {
-                    for (let x = 0; x < mw; x++) {
-                        const label = labels[y * mw + x];
-                        if (label === 0) continue;
-                        if (!blobsMap[label]) blobsMap[label] = [];
-                        blobsMap[label].push({ x: x * stride, y: y * stride });
-                    }
+                for(let y=0;y<mh;y++) for(let x=0;x<mw;x++) {
+                    const lbl = labels[y*mw+x]; if(!lbl) continue;
+                    if(!blobsMap[lbl]) blobsMap[lbl]=[];
+                    blobsMap[lbl].push({x:x*stride, y:y*stride});
                 }
-
                 const blobs = [];
-                for (const lbl in blobsMap) {
-                    const pts = blobsMap[lbl];
-                    let sumX = 0, sumY = 0;
-                    for (const p of pts) { sumX += p.x; sumY += p.y; }
-                    const cx = sumX / pts.length;
-                    const cy = sumY / pts.length;
-                    let sumDist = 0;
-                    const dists = [];
-                    for (const p of pts) {
-                        const d = Math.hypot(p.x - cx, p.y - cy);
-                        dists.push(d);
-                        sumDist += d;
-                    }
-                    const radius = sumDist / pts.length;
-                    const circleArea = Math.PI * radius * radius;
-                    const pixelArea = pts.length * (stride * stride);
-                    const circularity = Math.min(pixelArea / circleArea, circleArea / pixelArea);
-                    blobs.push({ points: pts, cx, cy, radius, circularity });
+                for(const lbl in blobsMap) {
+                    const pts=blobsMap[lbl]; let sx=0,sy=0;
+                    for(const p of pts){sx+=p.x; sy+=p.y;}
+                    const cx=sx/pts.length, cy=sy/pts.length;
+                    let sumDist=0; const dists=[];
+                    for(const p of pts){ const d=Math.hypot(p.x-cx,p.y-cy); dists.push(d); sumDist+=d; }
+                    const radius=sumDist/pts.length;
+                    const circleArea=Math.PI*radius*radius, pixelArea=pts.length*(stride*stride);
+                    const circularity=Math.min(pixelArea/circleArea, circleArea/pixelArea);
+                    blobs.push({points:pts, cx,cy,radius,circularity});
                 }
                 return blobs;
             }
 
-            // ---------------------------------------------------------------
-            // Simple 2D Kalman filter for smoothing ball trajectory
-            // ---------------------------------------------------------------
             applyKalmanFilter(detection, timestamp) {
                 const k = this.kalman;
-                if (k.lastTime === null) {
-                    // Initialize state
-                    k.x = detection.x;
-                    k.y = detection.y;
-                    k.vx = 0;
-                    k.vy = 0;
-                    k.lastTime = timestamp;
-                    return { x: detection.x, y: detection.y, radius: detection.radius };
+                if(k.lastTime===null) {
+                    k.x=detection.x; k.y=detection.y; k.vx=0; k.vy=0; k.lastTime=timestamp;
+                    return {x:detection.x, y:detection.y, radius:detection.radius};
                 }
-
-                const dt = (timestamp - k.lastTime) / 1000; // seconds
-                if (dt <= 0) return detection;
+                const dt = (timestamp - k.lastTime)/1000; if(dt<=0) return detection;
                 k.lastTime = timestamp;
-
-                // State transition matrix (constant velocity)
-                // Predict step
-                const newX = k.x + k.vx * dt;
-                const newY = k.y + k.vy * dt;
-
-                // Process noise covariance Q
+                const newX = k.x + k.vx*dt, newY = k.y + k.vy*dt;
                 const q = k.Q;
-                // Update P = F*P*F' + Q (simplified)
-                k.P[0][0] += q * dt;
-                k.P[1][1] += q * dt;
-                k.P[2][2] += q;
-                k.P[3][3] += q;
-
-                // Measurement update
-                const zx = detection.x;
-                const zy = detection.y;
-                const r = k.R;
-
-                // Kalman gain (simplified for diagonal assumption)
-                const kx = k.P[0][0] / (k.P[0][0] + r);
-                const ky = k.P[1][1] / (k.P[1][1] + r);
-
-                k.x = newX + kx * (zx - newX);
-                k.y = newY + ky * (zy - newY);
-
-                // Update covariance
-                k.P[0][0] *= (1 - kx);
-                k.P[1][1] *= (1 - ky);
-
-                return { x: k.x, y: k.y, radius: detection.radius };
+                k.P[0][0] += q*dt; k.P[1][1] += q*dt; k.P[2][2] += q; k.P[3][3] += q;
+                const zx=detection.x, zy=detection.y, r=k.R;
+                const kx = k.P[0][0]/(k.P[0][0]+r), ky = k.P[1][1]/(k.P[1][1]+r);
+                k.x = newX + kx*(zx-newX); k.y = newY + ky*(zy-newY);
+                k.P[0][0] *= (1-kx); k.P[1][1] *= (1-ky);
+                return {x:k.x, y:k.y, radius:detection.radius};
             }
 
-            // ---------------------------------------------------------------
-            // Speed calculation using moving window of positions
-            // ---------------------------------------------------------------
             calculateSpeed() {
-                const hist = this.ballPositions;
-                if (hist.length < 2) return;
-
-                const recent = hist.slice(-8);
-                const first = recent[0];
-                const last = recent[recent.length - 1];
-                const dt = (last.timestamp - first.timestamp) / 1000;
-                if (dt < 0.005) return;
-
-                // Average radius for scale conversion
-                let avgRadius = 0;
-                for (const p of recent) avgRadius += p.radius;
-                avgRadius /= recent.length;
-                if (avgRadius < 1.5) return;
-
-                const metersPerPixel = (this.ballDiameterMeters / 2) / avgRadius;
-                const pixelDistance = Math.hypot(last.x - first.x, last.y - first.y);
-                const realDistance = pixelDistance * metersPerPixel;
-                const speedMps = realDistance / dt;
-                const clampedSpeed = Math.max(0, Math.min(speedMps, 85)); // max ~190 mph
-                this.currentSpeedMps = clampedSpeed;
-                this.currentSpeedMph = clampedSpeed * 2.23694;
+                const hist = this.ballPositions; if(hist.length<2) return;
+                const recent = hist.slice(-8); const first=recent[0], last=recent[recent.length-1];
+                const dt = (last.timestamp-first.timestamp)/1000; if(dt<0.005) return;
+                let avgR=0; for(const p of recent) avgR+=p.radius; avgR/=recent.length; if(avgR<1.5) return;
+                const mPerPx = (this.ballDiameterMeters/2)/avgR;
+                const pixDist = Math.hypot(last.x-first.x, last.y-first.y);
+                const speedMps = (pixDist*mPerPx)/dt;
+                const clamped = Math.max(0, Math.min(speedMps,85));
+                this.currentSpeedMps = clamped; this.currentSpeedMph = clamped*2.23694;
                 this.displayedSpeed = this.currentSpeedMph;
-
-                // Shot detection and peak tracking
-                if (this.currentSpeedMph > 18 && !this.shotActive) {
-                    this.startShot();
-                }
-                if (this.shotActive && this.currentSpeedMph > this.shotPeakMph) {
+                if(this.currentSpeedMph>18 && !this.shotActive) this.startShot();
+                if(this.shotActive && this.currentSpeedMph>this.shotPeakMph) {
                     this.shotPeakMph = this.currentSpeedMph;
-                    if (this.shotPeakMph > this.peakSpeedMph) {
+                    if(this.shotPeakMph>this.peakSpeedMph) {
                         this.peakSpeedMph = this.shotPeakMph;
                         this.updatePeakDisplay();
                         this.triggerPeakEffect();
@@ -1044,283 +895,165 @@
 
             updateSpeedDisplay() {
                 const mph = Math.round(this.currentSpeedMph);
-                if (mph < 5) {
-                    this.elements.speedValue.textContent = '--';
-                    return;
-                }
-                this.elements.speedValue.textContent = mph;
+                if(mph<5) this.elements.speedValue.textContent='--';
+                else this.elements.speedValue.textContent = mph;
             }
 
-            startShot() {
-                this.shotActive = true;
-                this.shotPeakMph = this.currentSpeedMph;
-            }
-
+            startShot() { this.shotActive=true; this.shotPeakMph=this.currentSpeedMph; }
             endShot() {
-                this.shotActive = false;
-                this.shotPeakMph = 0;
+                this.shotActive=false;
+                if(this.shotPeakMph>10) this.recordShot(this.shotPeakMph);
+                this.shotPeakMph=0;
                 this.elements.cameraWrapper.classList.remove('shot-detected');
+            }
+            recordShot(mph) {
+                this.totalShots++;
+                this.sumSpeeds += mph;
+                this.shotHistory.push({speed:Math.round(mph), time:new Date().toLocaleTimeString()});
+                if(this.shotHistory.length>15) this.shotHistory.shift();
+                this.elements.shotCount.textContent = this.totalShots;
+                this.elements.lastSpeed.textContent = Math.round(mph);
+                const avg = Math.round(this.sumSpeeds/this.totalShots);
+                this.elements.avgSpeed.textContent = avg;
+                this.updateHistoryList();
+            }
+            updateHistoryList() {
+                const list = this.elements.historyList;
+                list.innerHTML = '';
+                if(this.shotHistory.length===0) list.innerHTML = '<span style="color:#555;">No shots yet.</span>';
+                else {
+                    for(let i=this.shotHistory.length-1; i>=0; i--) {
+                        const s = this.shotHistory[i];
+                        const div = document.createElement('div');
+                        div.className = 'history-item';
+                        div.innerHTML = `<span>${s.time}</span> <strong>${s.speed} mph</strong>`;
+                        list.appendChild(div);
+                    }
+                }
             }
 
             updatePeakDisplay() {
-                this.elements.peakSpeedEl.innerHTML = Math.round(this.peakSpeedMph) + ' <sup>mph</sup>';
+                this.elements.peakSpeedEl.innerHTML = Math.round(this.peakSpeedMph)+' <sup>mph</sup>';
             }
-
             triggerPeakEffect() {
                 this.elements.cameraWrapper.classList.add('shot-detected');
-                setTimeout(() => this.elements.cameraWrapper.classList.remove('shot-detected'), 600);
+                setTimeout(()=> this.elements.cameraWrapper.classList.remove('shot-detected'), 600);
             }
 
             updateStatusIndicators() {
-                if (this.ballDetected && this.shotActive) {
-                    this.elements.statusDot.className = 'status-dot tracking';
-                    this.elements.statusText.textContent = 'Shot!';
-                } else if (this.ballDetected) {
-                    this.elements.statusDot.className = 'status-dot tracking';
-                    this.elements.statusText.textContent = 'Tracking';
+                if(this.ballDetected && this.shotActive) {
+                    this.elements.statusDot.className='status-dot tracking';
+                    this.elements.statusText.textContent='Shot!';
+                } else if(this.ballDetected) {
+                    this.elements.statusDot.className='status-dot tracking';
+                    this.elements.statusText.textContent='Tracking';
                 } else {
-                    this.elements.statusDot.className = 'status-dot active';
-                    this.elements.statusText.textContent = 'Active';
+                    this.elements.statusDot.className='status-dot active';
+                    this.elements.statusText.textContent='Active';
                 }
             }
 
-            // ---------------------------------------------------------------
-            // Drawing overlays on display canvas
-            // ---------------------------------------------------------------
-            drawOverlay(dx, dy, scale, displayW, displayH) {
-                const ctx = this.displayCtx;
-                // Ball trail
-                if (this.ballPositions.length > 1) {
+            drawOverlay(dx,dy,scale,dispW,dispH) {
+                const ctx=this.displayCtx;
+                if(this.ballPositions.length>1) {
                     const trail = this.ballPositions.slice(-20);
-                    for (let i = 1; i < trail.length; i++) {
-                        const prev = trail[i - 1];
-                        const curr = trail[i];
-                        const px = dx + (prev.x / this.procWidth) * this.elements.video.videoWidth * scale;
-                        const py = dy + (prev.y / this.procHeight) * this.elements.video.videoHeight * scale;
-                        const cx = dx + (curr.x / this.procWidth) * this.elements.video.videoWidth * scale;
-                        const cy = dy + (curr.y / this.procHeight) * this.elements.video.videoHeight * scale;
-                        const alpha = i / trail.length;
-                        ctx.strokeStyle = `rgba(200,224,48,${0.3 + alpha * 0.7})`;
-                        ctx.lineWidth = 2 + alpha * 3;
-                        ctx.beginPath();
-                        ctx.moveTo(px, py);
-                        ctx.lineTo(cx, cy);
-                        ctx.stroke();
+                    for(let i=1;i<trail.length;i++) {
+                        const p=trail[i-1], c=trail[i];
+                        const px=dx+(p.x/this.procWidth)*this.elements.video.videoWidth*scale;
+                        const py=dy+(p.y/this.procHeight)*this.elements.video.videoHeight*scale;
+                        const cx=dx+(c.x/this.procWidth)*this.elements.video.videoWidth*scale;
+                        const cy=dy+(c.y/this.procHeight)*this.elements.video.videoHeight*scale;
+                        const alpha=i/trail.length;
+                        ctx.strokeStyle=`rgba(200,224,48,${0.3+alpha*0.7})`;
+                        ctx.lineWidth=2+alpha*3; ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(cx,cy); ctx.stroke();
                     }
                 }
-                // Current ball marker
-                if (this.currentBall && this.ballDetected) {
-                    const bx = dx + (this.currentBall.x / this.procWidth) * this.elements.video.videoWidth * scale;
-                    const by = dy + (this.currentBall.y / this.procHeight) * this.elements.video.videoHeight * scale;
-                    const br = (this.currentBall.radius / this.procWidth) * this.elements.video.videoWidth * scale;
-                    ctx.beginPath();
-                    ctx.arc(bx, by, br, 0, 2 * Math.PI);
-                    ctx.strokeStyle = '#c8e030';
-                    ctx.lineWidth = 3;
-                    ctx.shadowColor = '#c8e030';
-                    ctx.shadowBlur = 12;
-                    ctx.stroke();
-                    ctx.shadowBlur = 0;
-                    ctx.fillStyle = '#fff';
-                    ctx.beginPath();
-                    ctx.arc(bx, by, 3, 0, 2 * Math.PI);
-                    ctx.fill();
+                if(this.currentBall && this.ballDetected) {
+                    const bx=dx+(this.currentBall.x/this.procWidth)*this.elements.video.videoWidth*scale;
+                    const by=dy+(this.currentBall.y/this.procHeight)*this.elements.video.videoHeight*scale;
+                    const br=(this.currentBall.radius/this.procWidth)*this.elements.video.videoWidth*scale;
+                    ctx.beginPath(); ctx.arc(bx,by,br,0,2*Math.PI);
+                    ctx.strokeStyle='#c8e030'; ctx.lineWidth=3; ctx.shadowColor='#c8e030'; ctx.shadowBlur=12; ctx.stroke();
+                    ctx.shadowBlur=0; ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(bx,by,3,0,2*Math.PI); ctx.fill();
                 }
             }
 
-            // ---------------------------------------------------------------
-            // Speed gauge drawing (animated radial gauge)
-            // ---------------------------------------------------------------
             drawGauge(speedMph) {
-                const canvas = this.elements.gaugeCanvas;
-                const ctx = this.gaugeCtx;
-                const w = canvas.width, h = canvas.height;
-                ctx.clearRect(0, 0, w, h);
-
-                const cx = w / 2, cy = h / 2, radius = 140;
-                const startAngle = Math.PI * 0.75;
-                const endAngle = Math.PI * 2.25;
-                const maxSpeed = 150;
-
-                // Background track
-                ctx.beginPath();
-                ctx.arc(cx, cy, radius, startAngle, endAngle);
-                ctx.strokeStyle = '#2a2a3a';
-                ctx.lineWidth = 24;
-                ctx.stroke();
-
-                // Colored segments
-                const segments = [
-                    { max: 50, color: '#4caf50' },
-                    { max: 80, color: '#ffa502' },
-                    { max: 110, color: '#ff6b35' },
-                    { max: 150, color: '#ff4757' }
-                ];
-                let prevAngle = startAngle;
-                for (const seg of segments) {
-                    const angle = startAngle + (seg.max / maxSpeed) * (endAngle - startAngle);
-                    ctx.beginPath();
-                    ctx.arc(cx, cy, radius, prevAngle, angle);
-                    ctx.strokeStyle = seg.color;
-                    ctx.lineWidth = 20;
-                    ctx.stroke();
-                    prevAngle = angle;
-                }
-
-                // Peak indicator (🏆)
-                if (this.peakSpeedMph > 0) {
-                    const peakAngle = startAngle + (Math.min(this.peakSpeedMph, maxSpeed) / maxSpeed) * (endAngle - startAngle);
-                    const px = cx + Math.cos(peakAngle) * (radius + 18);
-                    const py = cy + Math.sin(peakAngle) * (radius + 18);
-                    ctx.fillStyle = '#fff';
-                    ctx.font = 'bold 16px "Segoe UI"';
-                    ctx.fillText('🏆', px - 14, py + 6);
-                }
-
-                // Needle
-                const needleAngle = startAngle + (Math.min(speedMph, maxSpeed) / maxSpeed) * (endAngle - startAngle);
-                ctx.beginPath();
-                ctx.moveTo(cx, cy);
-                const needleLength = radius - 30;
-                const nx = cx + Math.cos(needleAngle) * needleLength;
-                const ny = cy + Math.sin(needleAngle) * needleLength;
-                ctx.lineTo(nx, ny);
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 4;
-                ctx.stroke();
-
-                // Center cap
-                ctx.beginPath();
-                ctx.arc(cx, cy, 14, 0, 2 * Math.PI);
-                ctx.fillStyle = '#ffffff';
-                ctx.fill();
-                ctx.strokeStyle = '#888';
-                ctx.lineWidth = 2;
-                ctx.stroke();
+                const canvas=this.elements.gaugeCanvas, ctx=this.gaugeCtx;
+                const w=canvas.width, h=canvas.height; ctx.clearRect(0,0,w,h);
+                const cx=w/2, cy=h/2, r=140, startAngle=Math.PI*0.75, endAngle=Math.PI*2.25, maxSpeed=150;
+                ctx.beginPath(); ctx.arc(cx,cy,r,startAngle,endAngle); ctx.strokeStyle='#2a2a3a'; ctx.lineWidth=24; ctx.stroke();
+                const segs=[{max:50,color:'#4caf50'},{max:80,color:'#ffa502'},{max:110,color:'#ff6b35'},{max:150,color:'#ff4757'}];
+                let prev=startAngle;
+                for(const s of segs){ const a=startAngle+(s.max/maxSpeed)*(endAngle-startAngle); ctx.beginPath(); ctx.arc(cx,cy,r,prev,a); ctx.strokeStyle=s.color; ctx.lineWidth=20; ctx.stroke(); prev=a; }
+                if(this.peakSpeedMph>0){ const pa=startAngle+(Math.min(this.peakSpeedMph,maxSpeed)/maxSpeed)*(endAngle-startAngle); const px=cx+Math.cos(pa)*(r+18), py=cy+Math.sin(pa)*(r+18); ctx.fillStyle='#fff'; ctx.font='bold 16px "Segoe UI"'; ctx.fillText('🏆',px-14,py+6); }
+                const needle=startAngle+(Math.min(speedMph,maxSpeed)/maxSpeed)*(endAngle-startAngle);
+                ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(needle)*(r-30), cy+Math.sin(needle)*(r-30)); ctx.strokeStyle='#fff'; ctx.lineWidth=4; ctx.stroke();
+                ctx.beginPath(); ctx.arc(cx,cy,14,0,2*Math.PI); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle='#888'; ctx.lineWidth=2; ctx.stroke();
             }
 
-            // ---------------------------------------------------------------
-            // Color calibration – click on the video to sample ball color
-            // ---------------------------------------------------------------
+            // Calibration
             startCalibration() {
-                if (!this.isCameraActive) return;
+                if(!this.isCameraActive) return;
                 this.calibrationMode = true;
                 this.elements.cameraWrapper.classList.add('calibrating');
                 this.elements.statusText.textContent = 'Click on the ball';
                 this.elements.displayCanvas.style.cursor = 'crosshair';
                 this.elements.displayCanvas.addEventListener('click', this.handleCalibrationClick);
             }
-
             handleCalibrationClick(e) {
                 const rect = this.elements.displayCanvas.getBoundingClientRect();
                 const scaleX = this.elements.video.videoWidth / rect.width;
                 const scaleY = this.elements.video.videoHeight / rect.height;
-                const videoX = (e.clientX - rect.left) * scaleX;
-                const videoY = (e.clientY - rect.top) * scaleY;
-
-                // Create temporary canvas to read pixel color
+                const videoX = (e.clientX - rect.left)*scaleX;
+                const videoY = (e.clientY - rect.top)*scaleY;
                 const tmpCanvas = document.createElement('canvas');
-                tmpCanvas.width = this.elements.video.videoWidth;
-                tmpCanvas.height = this.elements.video.videoHeight;
-                const tmpCtx = tmpCanvas.getContext('2d');
-                tmpCtx.drawImage(this.elements.video, 0, 0);
-                const pixel = tmpCtx.getImageData(Math.round(videoX), Math.round(videoY), 1, 1).data;
-                const [r, g, b] = pixel;
-
-                const max = Math.max(r, g, b), min = Math.min(r, g, b);
-                const delta = max - min;
-                if (delta < 5) {
-                    alert('Not enough color variation. Click directly on the tennis ball.');
-                    return;
-                }
-
-                // Calculate HSV from sampled pixel
-                let h = 0;
-                if (max === r) h = ((g - b) / delta) % 6;
-                else if (max === g) h = (b - r) / delta + 2;
-                else h = (r - g) / delta + 4;
-                h = Math.round(h * 30); // 0-180
-                if (h < 0) h += 180;
-                const s = Math.round((delta / max) * 255);
-                const v = max;
-
-                // Set HSV range around sampled color
-                const hueMargin = 15, satMargin = 30, valMargin = 40;
-                this.hsvSettings.hueMin = Math.max(0, h - hueMargin);
-                this.hsvSettings.hueMax = Math.min(180, h + hueMargin);
-                this.hsvSettings.satMin = Math.max(10, s - satMargin);
-                this.hsvSettings.valMin = Math.max(20, v - valMargin);
-
-                this.updateSettingsUI();
-                this.endCalibration();
-                alert('Color calibrated! New HSV range applied.');
+                tmpCanvas.width=this.elements.video.videoWidth; tmpCanvas.height=this.elements.video.videoHeight;
+                const tmpCtx=tmpCanvas.getContext('2d'); tmpCtx.drawImage(this.elements.video,0,0);
+                const pixel = tmpCtx.getImageData(Math.round(videoX), Math.round(videoY),1,1).data;
+                const [r,g,b]=pixel; const max=Math.max(r,g,b), min=Math.min(r,g,b), delta=max-min;
+                if(delta<5) { alert('Click on the tennis ball.'); return; }
+                let h=0; if(max===r) h=((g-b)/delta)%6; else if(max===g) h=(b-r)/delta+2; else h=(r-g)/delta+4;
+                h=Math.round(h*30); if(h<0) h+=180; const s=Math.round((delta/max)*255), v=max;
+                this.hsvSettings.hueMin=Math.max(0,h-15); this.hsvSettings.hueMax=Math.min(180,h+15);
+                this.hsvSettings.satMin=Math.max(10,s-30); this.hsvSettings.valMin=Math.max(20,v-40);
+                this.updateSettingsUI(); this.endCalibration();
             }
-
             endCalibration() {
-                this.calibrationMode = false;
-                this.elements.cameraWrapper.classList.remove('calibrating');
-                this.elements.displayCanvas.style.cursor = '';
+                this.calibrationMode=false; this.elements.cameraWrapper.classList.remove('calibrating');
+                this.elements.displayCanvas.style.cursor='';
                 this.elements.displayCanvas.removeEventListener('click', this.handleCalibrationClick);
-                this.elements.statusText.textContent = 'Camera Active';
+                this.elements.statusText.textContent='Camera Active';
             }
 
-            // ---------------------------------------------------------------
-            // Manual settings and UI updates
-            // ---------------------------------------------------------------
             updateSettings() {
-                this.hsvSettings.hueMin = parseInt(this.elements.hueMin.value);
-                this.hsvSettings.hueMax = parseInt(this.elements.hueMax.value);
-                this.hsvSettings.satMin = parseInt(this.elements.satMin.value);
-                this.hsvSettings.valMin = parseInt(this.elements.valMin.value);
+                this.hsvSettings.hueMin = +this.elements.hueMin.value;
+                this.hsvSettings.hueMax = +this.elements.hueMax.value;
+                this.hsvSettings.satMin = +this.elements.satMin.value;
+                this.hsvSettings.valMin = +this.elements.valMin.value;
                 this.updateSettingsUI();
             }
-
             updateSettingsUI() {
-                this.elements.hueMin.value = this.hsvSettings.hueMin;
-                this.elements.hueMax.value = this.hsvSettings.hueMax;
-                this.elements.satMin.value = this.hsvSettings.satMin;
-                this.elements.valMin.value = this.hsvSettings.valMin;
-                this.elements.hueMinVal.textContent = this.hsvSettings.hueMin;
-                this.elements.hueMaxVal.textContent = this.hsvSettings.hueMax;
-                this.elements.satMinVal.textContent = this.hsvSettings.satMin;
-                this.elements.valMinVal.textContent = this.hsvSettings.valMin;
+                this.elements.hueMin.value=this.hsvSettings.hueMin; this.elements.hueMax.value=this.hsvSettings.hueMax;
+                this.elements.satMin.value=this.hsvSettings.satMin; this.elements.valMin.value=this.hsvSettings.valMin;
+                this.elements.hueMinVal.textContent=this.hsvSettings.hueMin; this.elements.hueMaxVal.textContent=this.hsvSettings.hueMax;
+                this.elements.satMinVal.textContent=this.hsvSettings.satMin; this.elements.valMinVal.textContent=this.hsvSettings.valMin;
             }
-
             resetCalibration() {
-                this.hsvSettings = { hueMin: 20, hueMax: 55, satMin: 40, valMin: 60 };
-                this.updateSettingsUI();
+                this.hsvSettings = {hueMin:20, hueMax:55, satMin:40, valMin:60}; this.updateSettingsUI();
             }
-
             resetPeak() {
-                this.peakSpeedMph = 0;
-                this.shotPeakMph = 0;
-                this.shotActive = false;
-                this.updatePeakDisplay();
-                this.elements.speedValue.textContent = '--';
-                this.displayedSpeed = 0;
-                this.drawGauge(0);
-                this.ballPositions = [];
-                this.elements.cameraWrapper.classList.remove('shot-detected');
+                this.peakSpeedMph=0; this.shotPeakMph=0; this.shotActive=false;
+                this.updatePeakDisplay(); this.elements.speedValue.textContent='--'; this.displayedSpeed=0;
+                this.drawGauge(0); this.ballPositions=[];
             }
-
-            toggleSettings() {
-                this.elements.settingsPanel.classList.toggle('open');
-            }
-
-            handleResize() {
-                if (this.isCameraActive && this.elements.video.videoWidth > 0) {
-                    this.setupCanvasSizes();
-                }
-            }
+            toggleSettings() { this.elements.settingsPanel.classList.toggle('open'); }
+            handleResize() { if(this.isCameraActive && this.elements.video.videoWidth>0) this.setupCanvasSizes(); }
         }
 
-        // ------------------------------------------------------------------
-        // Wait for DOM to be fully ready before instantiating the app.
-        // This prevents the "cannot set properties of undefined" error.
-        // ------------------------------------------------------------------
+        // Wait for DOM, then create the app (no inline handlers used)
         window.addEventListener('DOMContentLoaded', () => {
-            // Create the global app instance only after DOM is fully parsed.
-            window.app = new TennisBallRadarPro();
+            window.radarApp = new RadarApp();
         });
     </script>
 </body>
