@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Tennis Ball Speed Radar – Final</title>
+    <title>Tennis Ball Speed Radar – Fixed & Customizable</title>
     <style>
         :root {
             --bg: #0a0a0f;
@@ -15,11 +15,7 @@
             --border: #2a2a3a;
             --radius: 16px;
         }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: radial-gradient(circle at 20% 50%, #0f0f1a, #05050a);
@@ -45,11 +41,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .subtitle {
-            font-size: 0.85rem;
-            color: var(--text2);
-            margin-top: 4px;
-        }
+        .subtitle { font-size:0.85rem; color:var(--text2); margin-top:4px; }
         .main-container {
             width: 100%;
             max-width: 960px;
@@ -69,264 +61,99 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.4);
             transition: border-color 0.3s;
         }
-        .camera-wrapper.tracking {
-            border-color: #c8e030;
-            box-shadow: 0 0 40px rgba(200,224,48,0.3);
-        }
-        .camera-wrapper.shot-detected {
-            border-color: #ffa502;
-            box-shadow: 0 0 60px rgba(255,165,2,0.5);
-        }
-        .camera-wrapper.calibrating {
-            border-color: #fff;
-            box-shadow: 0 0 40px rgba(255,255,255,0.4);
-        }
-        video {
-            display: none;
-        }
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
+        .camera-wrapper.tracking { border-color:#c8e030; box-shadow:0 0 40px rgba(200,224,48,0.3); }
+        .camera-wrapper.shot-detected { border-color:#ffa502; box-shadow:0 0 60px rgba(255,165,2,0.5); }
+        .camera-wrapper.calibrating { border-color:#fff; box-shadow:0 0 40px rgba(255,255,255,0.4); }
+        video { display:none; }
+        canvas { display:block; width:100%; height:100%; object-fit:contain; }
         .camera-overlay {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            display: flex;
-            justify-content: space-between;
-            pointer-events: none;
-            z-index: 10;
+            position:absolute; top:10px; left:10px; right:10px;
+            display:flex; justify-content:space-between; pointer-events:none; z-index:10;
         }
         .status-badge {
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(12px);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            border: 1px solid rgba(255,255,255,0.2);
+            background:rgba(0,0,0,0.7); backdrop-filter:blur(12px);
+            padding:6px 14px; border-radius:20px; font-size:0.75rem; font-weight:600;
+            display:flex; align-items:center; gap:6px; border:1px solid rgba(255,255,255,0.2);
         }
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #666;
-        }
-        .status-dot.active {
-            background: #4caf50;
-            box-shadow: 0 0 10px #4caf50;
-            animation: dotPulse 1.5s infinite;
-        }
-        .status-dot.tracking {
-            background: #c8e030;
-            box-shadow: 0 0 12px #c8e030;
-            animation: dotPulse 0.7s infinite;
-        }
+        .status-dot { width:8px; height:8px; border-radius:50%; background:#666; }
+        .status-dot.active { background:#4caf50; box-shadow:0 0 10px #4caf50; animation:dotPulse 1.5s infinite; }
+        .status-dot.tracking { background:#c8e030; box-shadow:0 0 12px #c8e030; animation:dotPulse 0.7s infinite; }
         @keyframes dotPulse {
-            0%,100% { box-shadow: 0 0 8px currentColor; }
-            50% { box-shadow: 0 0 18px currentColor, 0 0 30px currentColor; }
+            0%,100% { box-shadow:0 0 8px currentColor; }
+            50% { box-shadow:0 0 18px currentColor, 0 0 30px currentColor; }
         }
         .fps-badge {
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(12px);
-            padding: 4px 10px;
-            border-radius: 16px;
-            font-size: 0.65rem;
-            color: #aaa;
-            border: 1px solid rgba(255,255,255,0.15);
-            pointer-events: auto;
+            background:rgba(0,0,0,0.7); backdrop-filter:blur(12px);
+            padding:4px 10px; border-radius:16px; font-size:0.65rem; color:#aaa;
+            border:1px solid rgba(255,255,255,0.15); pointer-events:auto;
         }
 
-        /* Speed panel – classic large digital */
         .speed-panel {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-items: center;
-            justify-content: center;
-            padding: 8px 0;
+            display:flex; flex-wrap:wrap; gap:20px; align-items:center; justify-content:center; padding:8px 0;
         }
-        .speed-main {
-            text-align: center;
-        }
+        .speed-main { text-align:center; }
         .speed-value {
-            font-size: clamp(3rem, 8vw, 5rem);
-            font-weight: 900;
-            line-height: 1;
-            color: #fff;
-            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+            font-size:clamp(3rem, 8vw, 5rem); font-weight:900; line-height:1; color:#fff;
+            text-shadow:0 0 20px rgba(255,255,255,0.3);
         }
-        .speed-unit {
-            font-size: 1rem;
-            color: var(--text2);
-            margin-top: -4px;
-        }
-        .speed-kmh {
-            font-size: 1.1rem;
-            color: #888;
-        }
+        .speed-unit { font-size:1rem; color:var(--text2); margin-top:-4px; }
+        .speed-kmh { font-size:1.1rem; color:#888; }
         .peak-panel {
-            background: var(--surface2);
-            border-radius: 18px;
-            padding: 16px 22px;
-            border: 1px solid var(--border);
-            text-align: center;
+            background:var(--surface2); border-radius:18px; padding:16px 22px;
+            border:1px solid var(--border); text-align:center;
         }
-        .peak-panel .label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            color: var(--text2);
-        }
-        .peak-panel .value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #ffa502;
-        }
+        .peak-panel .label { font-size:0.7rem; text-transform:uppercase; color:var(--text2); }
+        .peak-panel .value { font-size:2.2rem; font-weight:700; color:#ffa502; }
 
         .controls {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
+            display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center;
         }
         button, select, input[type="color"] {
-            padding: 10px 16px;
-            border-radius: 30px;
-            border: none;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            letter-spacing: 0.03em;
-            font-family: inherit;
-            white-space: nowrap;
-            background: var(--surface2);
-            color: var(--text);
-            border: 1.5px solid var(--border);
-            transition: all 0.25s;
-            outline: none;
-            height: 44px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            padding:10px 16px; border-radius:30px; border:none; font-size:0.8rem; font-weight:600;
+            cursor:pointer; letter-spacing:0.03em; font-family:inherit; white-space:nowrap;
+            background:var(--surface2); color:var(--text); border:1.5px solid var(--border);
+            transition:all 0.25s; outline:none; height:44px;
+            display:inline-flex; align-items:center; justify-content:center;
         }
-        button:hover, select:hover {
-            background: #252540;
-            border-color: #666;
-        }
-        .btn-primary {
-            background: #c8e030;
-            color: #1a1a00;
-            border: none;
-            box-shadow: 0 4px 16px rgba(200,224,48,0.3);
-        }
-        .btn-calibrate {
-            background: #4a4aff;
-            color: #fff;
-            border: none;
-        }
-        .btn-danger {
-            background: transparent;
-            color: #ff6b6b;
-            border-color: #ff6b6b44;
-        }
-        button:disabled, select:disabled {
-            opacity: 0.4;
-            pointer-events: none;
-        }
+        button:hover, select:hover { background:#252540; border-color:#666; }
+        .btn-primary { background:#c8e030; color:#1a1a00; border:none; box-shadow:0 4px 16px rgba(200,224,48,0.3); }
+        .btn-calibrate { background:#4a4aff; color:#fff; border:none; }
+        .btn-danger { background:transparent; color:#ff6b6b; border-color:#ff6b6b44; }
+        button:disabled, select:disabled { opacity:0.4; pointer-events:none; }
         select {
-            padding-right: 40px;
+            padding-right:40px;
             background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M7 10l5 5 5-5z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            appearance: none;
+            background-repeat:no-repeat; background-position:right 14px center; appearance:none;
         }
-        input[type="color"] {
-            width: 44px;
-            padding: 4px;
-            background: transparent;
-            border-radius: 50%;
-        }
+        input[type="color"] { width:44px; padding:4px; background:transparent; border-radius:50%; }
 
         .settings-panel {
-            background: var(--surface);
-            border-radius: var(--radius);
-            padding: 16px 20px;
-            border: 1px solid var(--border);
-            display: none;
-            flex-direction: column;
-            gap: 12px;
+            background:var(--surface); border-radius:var(--radius); padding:16px 20px;
+            border:1px solid var(--border); display:none; flex-direction:column; gap:12px;
         }
-        .settings-panel.open {
-            display: flex;
-        }
-        .setting-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .setting-row label {
-            font-size: 0.8rem;
-            color: #ccc;
-            min-width: 70px;
-        }
-        .setting-row input[type="range"] {
-            flex: 1;
-            min-width: 100px;
-            accent-color: #c8e030;
-        }
-        .range-val {
-            font-size: 0.75rem;
-            color: #aaa;
-            min-width: 28px;
-            text-align: center;
-        }
-        .setting-hint {
-            font-size: 0.7rem;
-            color: #777;
-            font-style: italic;
-        }
+        .settings-panel.open { display:flex; }
+        .setting-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+        .setting-row label { font-size:0.8rem; color:#ccc; min-width:70px; }
+        .setting-row input[type="range"] { flex:1; min-width:100px; accent-color:#c8e030; }
+        .range-val { font-size:0.75rem; color:#aaa; min-width:28px; text-align:center; }
+        .setting-hint { font-size:0.7rem; color:#777; font-style:italic; }
         .info-banner {
-            background: var(--surface2);
-            border-radius: 14px;
-            padding: 12px 18px;
-            font-size: 0.75rem;
-            color: #aaa;
-            text-align: center;
-            border: 1px solid var(--border);
-            line-height: 1.5;
+            background:var(--surface2); border-radius:14px; padding:12px 18px; font-size:0.75rem;
+            color:#aaa; text-align:center; border:1px solid var(--border); line-height:1.5;
         }
 
-        @media (max-width: 500px) {
-            .camera-wrapper {
-                aspect-ratio: 4/3;
-                min-height: 240px;
-                border-radius: 12px;
-            }
-            .controls button, .controls select {
-                padding: 8px 14px;
-                font-size: 0.75rem;
-            }
-            .speed-value {
-                font-size: 2.6rem;
-            }
-            .peak-panel .value {
-                font-size: 1.8rem;
-            }
+        @media (max-width:500px) {
+            .camera-wrapper { aspect-ratio:4/3; min-height:240px; border-radius:12px; }
+            .controls button, .controls select { padding:8px 14px; font-size:0.75rem; }
+            .speed-value { font-size:2.6rem; }
+            .peak-panel .value { font-size:1.8rem; }
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>🎾 Ball Speed Radar Pro</h1>
-        <p class="subtitle">Classic digital speed · Custom trail & glow · Mobile ready</p>
+        <p class="subtitle">Customizable trail & glow · No calibration needed · Mobile ready</p>
     </div>
 
     <div class="main-container">
@@ -390,25 +217,20 @@
 
     <script>
         (function() {
-            // --- Radar App Class ---
             class RadarApp {
                 constructor() {
-                    this.elements = {};
-                    // Grab all needed elements
                     const ids = [
                         'video','displayCanvas','cameraWrapper','statusDot','statusText','fpsDisplay',
                         'speedValue','speedKmh','peakSpeed','btnStart','btnCalibrate','btnSwitchCam',
-                        'qualitySelect','settingsPanel','hueMin','hueMax','satMin','valMin',
-                        'hueMinVal','hueMaxVal','satMinVal','valMinVal','trailColor','trailWidth',
-                        'trailWidthVal','circleColor','circleGlow','circleGlowVal'
+                        'qualitySelect','settingsPanel','btnSettings','btnReset',
+                        'hueMin','hueMax','satMin','valMin','hueMinVal','hueMaxVal','satMinVal','valMinVal',
+                        'trailColor','trailWidth','trailWidthVal','circleColor','circleGlow','circleGlowVal'
                     ];
+                    this.elements = {};
                     for (const id of ids) {
                         this.elements[id] = document.getElementById(id);
                     }
-                    if (!this.elements.video || !this.elements.displayCanvas) {
-                        console.error('RadarApp: critical elements missing');
-                        return;
-                    }
+                    if (!this.elements.video || !this.elements.displayCanvas) return;
 
                     this.displayCtx = this.elements.displayCanvas.getContext('2d');
                     this.procCanvas = document.createElement('canvas');
@@ -416,7 +238,6 @@
                     this.procWidth = 640;
                     this.procHeight = 360;
 
-                    // State
                     this.stream = null;
                     this.facingMode = 'environment';
                     this.isCameraActive = false;
@@ -445,7 +266,6 @@
                     this.quality = 'medium';
 
                     this.kalman = { x:0,y:0,vx:0,vy:0, P:[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]], Q:0.01, R:5, lastTime:null };
-
                     this.peakTrail = null;
                     this.peakTrailDuration = 3000;
 
@@ -467,10 +287,10 @@
                     document.getElementById('btnResetCalibration').addEventListener('click', ()=> this.resetCalibration());
 
                     ['hueMin','hueMax','satMin','valMin','trailWidth','circleGlow'].forEach(id => {
-                        this.elements[id].addEventListener('input', ()=> this.updateSettings());
+                        e[id].addEventListener('input', ()=> this.updateSettings());
                     });
-                    this.elements.trailColor.addEventListener('input', ()=> this.updateSettings());
-                    this.elements.circleColor.addEventListener('input', ()=> this.updateSettings());
+                    e.trailColor.addEventListener('input', ()=> this.updateSettings());
+                    e.circleColor.addEventListener('input', ()=> this.updateSettings());
 
                     window.addEventListener('resize', () => {
                         clearTimeout(this._resizeTimer);
@@ -591,7 +411,6 @@
                     if (!this.isProcessing) return;
                     this.animationId = requestAnimationFrame(this.processFrame);
 
-                    // FPS
                     this.fpsCounter++;
                     if (timestamp - this.fpsTimer >= 1000) {
                         this.fps = Math.round(this.fpsCounter / ((timestamp - this.fpsTimer) / 1000));
@@ -795,7 +614,7 @@
                     const trailWidth = parseInt(this.elements.trailWidth.value)||3;
                     const glowSize = parseInt(this.elements.circleGlow.value)||15;
 
-                    // Normal trail
+                    // Normal customizable trail
                     if(this.ballPositions.length>1) {
                         for(let i=1; i<this.ballPositions.length; i++) {
                             const prev=this.ballPositions[i-1], curr=this.ballPositions[i];
@@ -877,7 +696,6 @@
                     this.elements.cameraWrapper.classList.add('calibrating');
                     this.elements.statusText.textContent = 'Tap the ball';
                     this.elements.displayCanvas.style.cursor = 'crosshair';
-                    // Use both click and touch for mobile
                     this.elements.displayCanvas.addEventListener('click', this.handleCalibration);
                     this.elements.displayCanvas.addEventListener('touchstart', this.handleCalibration, {passive:false});
                 }
@@ -969,7 +787,6 @@
                 }
             }
 
-            // Launch when DOM ready
             window.addEventListener('DOMContentLoaded', () => {
                 window.radarApp = new RadarApp();
             });
