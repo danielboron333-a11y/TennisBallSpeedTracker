@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Tennis Ball Speed Radar – Trail Fixed</title>
+    <title>Tennis Ball Speed Radar – Trail Guaranteed</title>
     <style>
         :root {
             --bg: #0a0a0f; --surface: #12121d; --surface2: #1a1a2e; --text: #e0e0e0;
@@ -86,7 +86,7 @@
 <body>
     <div class="header">
         <h1>🎾 Ball Speed Radar Pro</h1>
-        <p class="subtitle">Trail is back · Customizable & visible · Mobile ready</p>
+        <p class="subtitle">Trail is bright & persistent – you can't miss it</p>
     </div>
     <div class="main-container">
         <div class="camera-wrapper" id="cameraWrapper">
@@ -119,13 +119,13 @@
             <div class="setting-row"><label>Val Min</label><input type="range" id="valMin" min="0" max="255" value="60"><span class="range-val" id="valMinVal">60</span></div>
             <button id="btnResetCalibration" style="width:fit-content;">↩ Default</button>
             <h3 style="margin-top:12px;">Trail & Circle</h3>
-            <div class="setting-row"><label>Trail Color</label><input type="color" id="trailColor" value="#ffcc00"></div>
-            <div class="setting-row"><label>Trail Width</label><input type="range" id="trailWidth" min="1" max="12" value="5"><span class="range-val" id="trailWidthVal">5</span></div>
+            <div class="setting-row"><label>Trail Color</label><input type="color" id="trailColor" value="#ff3366"></div>
+            <div class="setting-row"><label>Trail Width</label><input type="range" id="trailWidth" min="2" max="12" value="7"><span class="range-val" id="trailWidthVal">7</span></div>
             <div class="setting-row"><label>Circle Color</label><input type="color" id="circleColor" value="#c8e030"></div>
-            <div class="setting-row"><label>Circle Glow</label><input type="range" id="circleGlow" min="5" max="30" value="15"><span class="range-val" id="circleGlowVal">15</span></div>
-            <p class="setting-hint">Trail appears instantly. Use Calibrate for best detection.</p>
+            <div class="setting-row"><label>Circle Glow</label><input type="range" id="circleGlow" min="5" max="30" value="18"><span class="range-val" id="circleGlowVal">18</span></div>
+            <p class="setting-hint">Trail is now neon pink by default – impossible to miss.</p>
         </div>
-        <div class="info-banner"><strong>💡 Tip:</strong> Trail is now bright yellow and thick – you can’t miss it!</div>
+        <div class="info-banner"><strong>💡 Tip:</strong> Trail appears instantly and lasts 2 seconds after the ball leaves.</div>
     </div>
 
     <script>
@@ -157,6 +157,7 @@
                     this.quality = 'medium';
                     this.kalman = { x:0,y:0,vx:0,vy:0, P:[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]], Q:0.01, R:5, lastTime:null };
                     this.peakTrail = null; this.peakTrailDuration = 3000;
+                    this.lastDetectionTime = 0; // for trail persistence
 
                     this.process = this.process.bind(this);
                     this.onCalibrate = this.onCalibrate.bind(this);
@@ -273,16 +274,25 @@
                         const filt = this.kalmanFilter(raw, ts);
                         this.currentBall = filt; this.ballDetected = true; this.framesSinceLastDetection = 0;
                         this.ballPositions.push({x:filt.x, y:filt.y, r:raw.r, ts});
+                        this.lastDetectionTime = ts; // remember when we last saw the ball
                         while (this.ballPositions.length > 30) this.ballPositions.shift();
                         if (this.ballPositions.length >= 2) this.calcSpeed();
                     } else {
                         this.framesSinceLastDetection++;
-                        if (this.framesSinceLastDetection > 10) { this.ballDetected=false; this.currentBall=null; this.ballPositions=[]; if(this.shotActive && this.framesSinceLastDetection>20) this.endShot(); }
+                        if (this.framesSinceLastDetection > 10) {
+                            this.ballDetected = false;
+                            this.currentBall = null;
+                            // Don't clear positions immediately! We'll keep them for trail persistence.
+                            if (ts - this.lastDetectionTime > 2000) {
+                                this.ballPositions = []; // clear after 2 seconds of no detection
+                            }
+                            if (this.shotActive && this.framesSinceLastDetection > 20) this.endShot();
+                        }
                     }
                     this.drawOverlay(dx,dy,scale,dw,dh,ts);
                     if (this.ballDetected && this.shotActive) { this.el.statusDot.className='status-dot tracking'; this.el.statusText.textContent='Shot!'; }
-                    else if (this.ballDetected) { this.el.statusDot.className='status-dot tracking'; this.el.statusText.textContent='Tracking'; }
-                    else { this.el.statusDot.className='status-dot active'; this.el.statusText.textContent='Active'; }
+                    else if (this.ballDetected || (ts - this.lastDetectionTime < 2000 && this.ballPositions.length > 0)) { this.el.statusDot.className='status-dot tracking'; this.el.statusText.textContent='Trail active'; }
+                    else if (this.isCameraActive) { this.el.statusDot.className='status-dot active'; this.el.statusText.textContent='Active'; }
                 }
 
                 detectBall(pixels, w, h) {
@@ -395,36 +405,46 @@
                 endShot(){ this.shotActive=false; this.shotPeakMph=0; this.el.cameraWrapper.classList.remove('shot-detected'); }
 
                 drawOverlay(dx,dy,scale,dw,dh,ts) {
-                    const ctx=this.displayCtx;
-                    const trailColor = this.el.trailColor.value;   // guaranteed #rrggbb from color input
-                    const circleColor = this.el.circleColor.value;
-                    const trailWidth = parseInt(this.el.trailWidth.value)||5;
-                    const glow = parseInt(this.el.circleGlow.value)||15;
+                    const ctx = this.displayCtx;
+                    // Always read current color values from DOM
+                    const trailColor = this.el.trailColor.value || '#ff3366';
+                    const circleColor = this.el.circleColor.value || '#c8e030';
+                    const trailWidth = Math.max(2, parseInt(this.el.trailWidth.value) || 7);
+                    const glow = parseInt(this.el.circleGlow.value) || 18;
 
-                    // 1) Draw trail (solid, visible, no parsing issues)
+                    // Draw trail if we have positions (even after detection loss for a while)
                     if (this.ballPositions.length > 1) {
                         ctx.save();
                         ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+                        // Fade out older positions gradually
                         for (let i = 1; i < this.ballPositions.length; i++) {
                             const prev = this.ballPositions[i-1];
                             const curr = this.ballPositions[i];
+                            const age = (ts - curr.ts) / 2000; // 0 = just added, 1 = 2 seconds old
+                            if (age > 1) continue; // skip positions older than 2s
+                            const alpha = Math.max(0.2, 1 - age);
                             const px = dx + (prev.x/this.procWidth) * this.el.video.videoWidth * scale;
                             const py = dy + (prev.y/this.procHeight) * this.el.video.videoHeight * scale;
                             const cx = dx + (curr.x/this.procWidth) * this.el.video.videoWidth * scale;
                             const cy = dy + (curr.y/this.procHeight) * this.el.video.videoHeight * scale;
-                            const alpha = 0.7 + (i / this.ballPositions.length) * 0.3; // fully opaque
-                            ctx.strokeStyle = trailColor;   // solid color, no hex-to-rgba needed
+
+                            // Clamp coordinates to canvas bounds (just in case)
+                            const clampX = v => Math.max(0, Math.min(dw, v));
+                            const clampY = v => Math.max(0, Math.min(dh, v));
+
                             ctx.globalAlpha = alpha;
-                            ctx.lineWidth = trailWidth + (i / this.ballPositions.length) * 4;
+                            ctx.strokeStyle = trailColor;
+                            ctx.lineWidth = trailWidth + (i / this.ballPositions.length) * 6;
                             ctx.beginPath();
-                            ctx.moveTo(px, py);
-                            ctx.lineTo(cx, cy);
+                            ctx.moveTo(clampX(px), clampY(py));
+                            ctx.lineTo(clampX(cx), clampY(cy));
                             ctx.stroke();
                         }
                         ctx.restore();
                     }
 
-                    // 2) Peak ghost trail (if active)
+                    // Peak ghost trail
                     if (this.peakTrail) {
                         const elapsed = ts - this.peakTrail.ts;
                         if (elapsed < this.peakTrailDuration) {
@@ -432,7 +452,7 @@
                             ctx.save();
                             ctx.globalAlpha = fade;
                             ctx.strokeStyle = trailColor;
-                            ctx.lineWidth = (trailWidth + 2) * fade;
+                            ctx.lineWidth = (trailWidth + 4) * fade;
                             for (let i = 1; i < this.peakTrail.pos.length; i++) {
                                 const prev = this.peakTrail.pos[i-1];
                                 const curr = this.peakTrail.pos[i];
@@ -451,12 +471,11 @@
                         }
                     }
 
-                    // 3) Ball circle (glowing)
+                    // Ball circle
                     if (this.currentBall && this.ballDetected) {
                         const bx = dx + (this.currentBall.x/this.procWidth) * this.el.video.videoWidth * scale;
                         const by = dy + (this.currentBall.y/this.procHeight) * this.el.video.videoHeight * scale;
                         const br = (this.currentBall.r/this.procWidth) * this.el.video.videoWidth * scale;
-
                         ctx.save();
                         const rgb = this.hexToRgb(circleColor);
                         const grad = ctx.createRadialGradient(bx, by, br*0.5, bx, by, br*1.8);
@@ -465,7 +484,6 @@
                         grad.addColorStop(1, 'rgba(0,0,0,0)');
                         ctx.fillStyle = grad;
                         ctx.beginPath(); ctx.arc(bx, by, br*1.8, 0, 2*Math.PI); ctx.fill();
-
                         ctx.strokeStyle = circleColor;
                         ctx.lineWidth = 3;
                         ctx.shadowColor = circleColor;
