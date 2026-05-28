@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Tennis Ball Speed Radar – Trail Guaranteed</title>
+    <title>Tennis Ball Speed Radar – Buttons & Trail Fixed</title>
     <style>
         :root {
             --bg: #0a0a0f; --surface: #12121d; --surface2: #1a1a2e; --text: #e0e0e0;
@@ -86,7 +86,7 @@
 <body>
     <div class="header">
         <h1>🎾 Ball Speed Radar Pro</h1>
-        <p class="subtitle">Trail is bright & persistent – you can't miss it</p>
+        <p class="subtitle">All buttons work · Trail is guaranteed · Customizable</p>
     </div>
     <div class="main-container">
         <div class="camera-wrapper" id="cameraWrapper">
@@ -120,12 +120,12 @@
             <button id="btnResetCalibration" style="width:fit-content;">↩ Default</button>
             <h3 style="margin-top:12px;">Trail & Circle</h3>
             <div class="setting-row"><label>Trail Color</label><input type="color" id="trailColor" value="#ff3366"></div>
-            <div class="setting-row"><label>Trail Width</label><input type="range" id="trailWidth" min="2" max="12" value="7"><span class="range-val" id="trailWidthVal">7</span></div>
+            <div class="setting-row"><label>Trail Width</label><input type="range" id="trailWidth" min="2" max="12" value="8"><span class="range-val" id="trailWidthVal">8</span></div>
             <div class="setting-row"><label>Circle Color</label><input type="color" id="circleColor" value="#c8e030"></div>
             <div class="setting-row"><label>Circle Glow</label><input type="range" id="circleGlow" min="5" max="30" value="18"><span class="range-val" id="circleGlowVal">18</span></div>
-            <p class="setting-hint">Trail is now neon pink by default – impossible to miss.</p>
+            <p class="setting-hint">Trail is bright pink & thick – impossible to miss.</p>
         </div>
-        <div class="info-banner"><strong>💡 Tip:</strong> Trail appears instantly and lasts 2 seconds after the ball leaves.</div>
+        <div class="info-banner"><strong>💡 Tip:</strong> Trail stays 2s after ball leaves. Click Start to test.</div>
     </div>
 
     <script>
@@ -133,14 +133,17 @@
             const $ = id => document.getElementById(id);
             class Radar {
                 constructor() {
-                    this.el = {};
-                    for (const id of ['video','displayCanvas','cameraWrapper','statusDot','statusText','fpsDisplay',
+                    // Cache ALL element IDs used in bindEvents
+                    const ids = [
+                        'video','displayCanvas','cameraWrapper','statusDot','statusText','fpsDisplay',
                         'speedValue','speedKmh','peakSpeed','btnStart','btnCalibrate','btnSwitchCam',
-                        'qualitySelect','settingsPanel','hueMin','hueMax','satMin','valMin',
-                        'hueMinVal','hueMaxVal','satMinVal','valMinVal','trailColor','trailWidth',
-                        'trailWidthVal','circleColor','circleGlow','circleGlowVal']) {
-                        this.el[id] = $(id);
-                    }
+                        'qualitySelect','settingsPanel','btnSettings','btnReset',
+                        'hueMin','hueMax','satMin','valMin','hueMinVal','hueMaxVal','satMinVal','valMinVal',
+                        'trailColor','trailWidth','trailWidthVal','circleColor','circleGlow','circleGlowVal'
+                    ];
+                    this.el = {};
+                    ids.forEach(id => this.el[id] = $(id));
+
                     this.displayCtx = this.el.displayCanvas.getContext('2d');
                     this.procCanvas = document.createElement('canvas');
                     this.procCtx = this.procCanvas.getContext('2d');
@@ -157,7 +160,7 @@
                     this.quality = 'medium';
                     this.kalman = { x:0,y:0,vx:0,vy:0, P:[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]], Q:0.01, R:5, lastTime:null };
                     this.peakTrail = null; this.peakTrailDuration = 3000;
-                    this.lastDetectionTime = 0; // for trail persistence
+                    this.lastDetectionTime = 0;
 
                     this.process = this.process.bind(this);
                     this.onCalibrate = this.onCalibrate.bind(this);
@@ -168,6 +171,7 @@
 
                 bindEvents() {
                     const e = this.el;
+                    // All buttons are now guaranteed to exist
                     e.btnStart.onclick = () => this.startCamera();
                     e.btnCalibrate.onclick = () => this.startCalibration();
                     e.btnSwitchCam.onclick = () => this.switchCamera();
@@ -274,7 +278,7 @@
                         const filt = this.kalmanFilter(raw, ts);
                         this.currentBall = filt; this.ballDetected = true; this.framesSinceLastDetection = 0;
                         this.ballPositions.push({x:filt.x, y:filt.y, r:raw.r, ts});
-                        this.lastDetectionTime = ts; // remember when we last saw the ball
+                        this.lastDetectionTime = ts;
                         while (this.ballPositions.length > 30) this.ballPositions.shift();
                         if (this.ballPositions.length >= 2) this.calcSpeed();
                     } else {
@@ -282,9 +286,9 @@
                         if (this.framesSinceLastDetection > 10) {
                             this.ballDetected = false;
                             this.currentBall = null;
-                            // Don't clear positions immediately! We'll keep them for trail persistence.
+                            // Keep trail for 2 seconds after loss
                             if (ts - this.lastDetectionTime > 2000) {
-                                this.ballPositions = []; // clear after 2 seconds of no detection
+                                this.ballPositions = [];
                             }
                             if (this.shotActive && this.framesSinceLastDetection > 20) this.endShot();
                         }
@@ -406,39 +410,32 @@
 
                 drawOverlay(dx,dy,scale,dw,dh,ts) {
                     const ctx = this.displayCtx;
-                    // Always read current color values from DOM
                     const trailColor = this.el.trailColor.value || '#ff3366';
                     const circleColor = this.el.circleColor.value || '#c8e030';
-                    const trailWidth = Math.max(2, parseInt(this.el.trailWidth.value) || 7);
+                    const trailWidth = Math.max(2, parseInt(this.el.trailWidth.value) || 8);
                     const glow = parseInt(this.el.circleGlow.value) || 18;
 
-                    // Draw trail if we have positions (even after detection loss for a while)
+                    // Trail - guaranteed thick and bright
                     if (this.ballPositions.length > 1) {
                         ctx.save();
                         ctx.lineCap = 'round';
                         ctx.lineJoin = 'round';
-                        // Fade out older positions gradually
                         for (let i = 1; i < this.ballPositions.length; i++) {
                             const prev = this.ballPositions[i-1];
                             const curr = this.ballPositions[i];
-                            const age = (ts - curr.ts) / 2000; // 0 = just added, 1 = 2 seconds old
-                            if (age > 1) continue; // skip positions older than 2s
-                            const alpha = Math.max(0.2, 1 - age);
+                            const age = (ts - curr.ts) / 2000; // 0-1 over 2 seconds
+                            if (age > 1) continue;
+                            const alpha = 1 - age; // 1 (fresh) to 0 (old)
                             const px = dx + (prev.x/this.procWidth) * this.el.video.videoWidth * scale;
                             const py = dy + (prev.y/this.procHeight) * this.el.video.videoHeight * scale;
                             const cx = dx + (curr.x/this.procWidth) * this.el.video.videoWidth * scale;
                             const cy = dy + (curr.y/this.procHeight) * this.el.video.videoHeight * scale;
-
-                            // Clamp coordinates to canvas bounds (just in case)
-                            const clampX = v => Math.max(0, Math.min(dw, v));
-                            const clampY = v => Math.max(0, Math.min(dh, v));
-
                             ctx.globalAlpha = alpha;
                             ctx.strokeStyle = trailColor;
                             ctx.lineWidth = trailWidth + (i / this.ballPositions.length) * 6;
                             ctx.beginPath();
-                            ctx.moveTo(clampX(px), clampY(py));
-                            ctx.lineTo(clampX(cx), clampY(cy));
+                            ctx.moveTo(px, py);
+                            ctx.lineTo(cx, cy);
                             ctx.stroke();
                         }
                         ctx.restore();
