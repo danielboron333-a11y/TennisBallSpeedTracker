@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Tennis Ball Speed Radar – Working Buttons & Better Detection</title>
+    <title>Tennis Ball Speed Radar – Final Working</title>
     <style>
         :root {
             --bg: #0a0a0f; --surface: #12121d; --surface2: #1a1a2e; --text: #e0e0e0;
@@ -41,14 +41,25 @@
         .status-dot.tracking { background:#c8e030; box-shadow:0 0 12px #c8e030; animation:dotPulse 0.7s infinite; }
         @keyframes dotPulse { 0%,100%{ box-shadow:0 0 8px currentColor; } 50%{ box-shadow:0 0 18px currentColor, 0 0 30px currentColor; } }
         .fps-badge { background:rgba(0,0,0,0.7); backdrop-filter:blur(12px); padding:4px 10px; border-radius:16px; font-size:0.65rem; color:#aaa; border:1px solid rgba(255,255,255,0.15); pointer-events:auto; }
-        .speed-panel { display:flex; flex-wrap:wrap; gap:20px; align-items:center; justify-content:center; padding:8px 0; }
+
+        /* Simple speed display – original style */
+        .speed-panel {
+            display:flex; flex-wrap:wrap; gap:20px; align-items:center; justify-content:center;
+        }
         .speed-main { text-align:center; }
-        .speed-value { font-size:clamp(3rem,8vw,5rem); font-weight:900; line-height:1; color:#fff; text-shadow:0 0 20px rgba(255,255,255,0.3); }
+        .speed-value {
+            font-size:clamp(3rem,8vw,5rem); font-weight:900; line-height:1; color:#fff;
+            text-shadow:0 0 20px rgba(255,255,255,0.3);
+        }
         .speed-unit { font-size:1rem; color:var(--text2); margin-top:-4px; }
         .speed-kmh { font-size:1.1rem; color:#888; }
-        .peak-panel { background:var(--surface2); border-radius:18px; padding:16px 22px; border:1px solid var(--border); text-align:center; }
+        .peak-panel {
+            background:var(--surface2); border-radius:18px; padding:16px 22px;
+            border:1px solid var(--border); text-align:center;
+        }
         .peak-panel .label { font-size:0.7rem; text-transform:uppercase; color:var(--text2); }
         .peak-panel .value { font-size:2.2rem; font-weight:700; color:#ffa502; }
+
         .controls { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center; }
         button,select,input[type="color"] {
             padding:10px 16px; border-radius:30px; border:none; font-size:0.8rem; font-weight:600;
@@ -67,7 +78,10 @@
             background-repeat:no-repeat; background-position:right 14px center; appearance:none;
         }
         input[type="color"] { width:44px; padding:4px; background:transparent; border-radius:50%; }
-        .settings-panel { background:var(--surface); border-radius:var(--radius); padding:16px 20px; border:1px solid var(--border); display:none; flex-direction:column; gap:12px; }
+        .settings-panel {
+            background:var(--surface); border-radius:var(--radius); padding:16px 20px;
+            border:1px solid var(--border); display:none; flex-direction:column; gap:12px;
+        }
         .settings-panel.open { display:flex; }
         .setting-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
         .setting-row label { font-size:0.8rem; color:#ccc; min-width:70px; }
@@ -75,6 +89,7 @@
         .range-val { font-size:0.75rem; color:#aaa; min-width:28px; text-align:center; }
         .setting-hint { font-size:0.7rem; color:#777; font-style:italic; }
         .info-banner { background:var(--surface2); border-radius:14px; padding:12px 18px; font-size:0.75rem; color:#aaa; text-align:center; border:1px solid var(--border); line-height:1.5; }
+
         @media (max-width:500px) {
             .camera-wrapper { aspect-ratio:4/3; min-height:240px; border-radius:12px; }
             .controls button,.controls select { padding:8px 14px; font-size:0.75rem; }
@@ -86,7 +101,7 @@
 <body>
     <div class="header">
         <h1>🎾 Ball Speed Radar Pro</h1>
-        <p class="subtitle">All buttons work · Better detection · Trail guaranteed</p>
+        <p class="subtitle">Original speed UI · Working trail · All buttons</p>
     </div>
     <div class="main-container">
         <div class="camera-wrapper" id="cameraWrapper">
@@ -97,20 +112,32 @@
                 <div class="fps-badge" id="fpsDisplay">-- FPS</div>
             </div>
         </div>
+
         <div class="speed-panel">
-            <div class="speed-main"><div class="speed-value" id="speedValue">--</div><div class="speed-unit">MPH</div><div class="speed-kmh" id="speedKmh"></div></div>
-            <div class="peak-panel"><div class="label">🏆 Peak Speed</div><div class="value" id="peakSpeed">0 <sup>mph</sup></div></div>
+            <div class="speed-main">
+                <div class="speed-value" id="speedValue">--</div>
+                <div class="speed-unit">MPH</div>
+                <div class="speed-kmh" id="speedKmh"></div>
+            </div>
+            <div class="peak-panel">
+                <div class="label">🏆 Peak Speed</div>
+                <div class="value" id="peakSpeed">0 <sup>mph</sup></div>
+            </div>
         </div>
+
         <div class="controls">
             <button class="btn-primary" id="btnStart">📷 Start</button>
             <button id="btnCalibrate" class="btn-calibrate" disabled>🎯 Calibrate</button>
             <button id="btnSwitchCam" disabled>🔄 Switch</button>
             <select id="qualitySelect" disabled>
-                <option value="low">30 fps</option><option value="medium" selected>60 fps</option><option value="high">Max fps</option>
+                <option value="low">30 fps</option>
+                <option value="medium" selected>60 fps</option>
+                <option value="high">Max fps</option>
             </select>
             <button id="btnSettings">⚙️ Settings</button>
             <button class="btn-danger" id="btnReset">↺ Reset</button>
         </div>
+
         <div class="settings-panel" id="settingsPanel">
             <h3>HSV Color Tuning</h3>
             <div class="setting-row"><label>Hue Min</label><input type="range" id="hueMin" min="0" max="180" value="15"><span class="range-val" id="hueMinVal">15</span></div>
@@ -123,9 +150,9 @@
             <div class="setting-row"><label>Trail Width</label><input type="range" id="trailWidth" min="2" max="12" value="8"><span class="range-val" id="trailWidthVal">8</span></div>
             <div class="setting-row"><label>Circle Color</label><input type="color" id="circleColor" value="#c8e030"></div>
             <div class="setting-row"><label>Circle Glow</label><input type="range" id="circleGlow" min="5" max="30" value="18"><span class="range-val" id="circleGlowVal">18</span></div>
-            <p class="setting-hint">Trail is bright pink & thick. Adjust HSV to improve detection.</p>
+            <p class="setting-hint">Trail is guaranteed bright. Adjust colors & HSV to improve tracking.</p>
         </div>
-        <div class="info-banner"><strong>💡 Tip:</strong> Start camera, show a tennis ball. If not tracked, open Settings and adjust Hue/Sat.</div>
+        <div class="info-banner"><strong>💡 Tip:</strong> Start camera, point at a tennis ball. The trail will appear.</div>
     </div>
 
     <script>
@@ -133,7 +160,6 @@
             const $ = id => document.getElementById(id);
             class Radar {
                 constructor() {
-                    // Cache all element IDs – includes ALL buttons and settings panel
                     const ids = [
                         'video','displayCanvas','cameraWrapper','statusDot','statusText','fpsDisplay',
                         'speedValue','speedKmh','peakSpeed','btnStart','btnCalibrate','btnSwitchCam',
@@ -142,17 +168,7 @@
                         'trailColor','trailWidth','trailWidthVal','circleColor','circleGlow','circleGlowVal'
                     ];
                     this.el = {};
-                    let missing = [];
-                    ids.forEach(id => {
-                        const el = $(id);
-                        if (!el) missing.push(id);
-                        this.el[id] = el;
-                    });
-                    if (missing.length) {
-                        console.error('Missing elements:', missing.join(', '));
-                        alert('UI error – missing buttons: ' + missing.join(', '));
-                        return;
-                    }
+                    ids.forEach(id => this.el[id] = $(id));
 
                     this.displayCtx = this.el.displayCanvas.getContext('2d');
                     this.procCanvas = document.createElement('canvas');
@@ -164,7 +180,6 @@
                     this.ballPositions = []; this.ballDetected = false; this.currentBall = null; this.trackedBall = null;
                     this.currentSpeedMph = 0; this.peakSpeedMph = 0; this.shotActive = false; this.shotPeakMph = 0;
                     this.framesSinceLastDetection = 0;
-                    // Wider default HSV for easier detection
                     this.hsv = { hMin:15, hMax:65, sMin:30, vMin:50 };
                     this.ballDiam = 0.067;
                     this.lastFrameTime = performance.now(); this.fps = 0; this.fpsCounter = 0; this.fpsTimer = performance.now();
@@ -175,27 +190,21 @@
 
                     this.process = this.process.bind(this);
                     this.onCalibrate = this.onCalibrate.bind(this);
-
                     this.bindEvents();
                     this.syncUI();
                 }
 
                 bindEvents() {
                     const e = this.el;
-                    // Check that each element exists before assigning (redundant, but safe)
-                    if (e.btnStart) e.btnStart.onclick = () => this.startCamera();
-                    if (e.btnCalibrate) e.btnCalibrate.onclick = () => this.startCalibration();
-                    if (e.btnSwitchCam) e.btnSwitchCam.onclick = () => this.switchCamera();
-                    if (e.qualitySelect) e.qualitySelect.onchange = () => this.changeQuality(e.qualitySelect.value);
-                    if (e.btnSettings && e.settingsPanel) e.btnSettings.onclick = () => e.settingsPanel.classList.toggle('open');
-                    if (e.btnReset) e.btnReset.onclick = () => this.resetPeak();
-                    const resetBtn = $('btnResetCalibration');
-                    if (resetBtn) resetBtn.onclick = () => { this.hsv = { hMin:15, hMax:65, sMin:30, vMin:50 }; this.syncUI(); };
-                    ['hueMin','hueMax','satMin','valMin','trailWidth','circleGlow'].forEach(id => {
-                        if (e[id]) e[id].oninput = () => this.onSettingChange();
-                    });
-                    if (e.trailColor) e.trailColor.oninput = () => this.onSettingChange();
-                    if (e.circleColor) e.circleColor.oninput = () => this.onSettingChange();
+                    e.btnStart.onclick = () => this.startCamera();
+                    e.btnCalibrate.onclick = () => this.startCalibration();
+                    e.btnSwitchCam.onclick = () => this.switchCamera();
+                    e.qualitySelect.onchange = () => this.changeQuality(e.qualitySelect.value);
+                    e.btnSettings.onclick = () => e.settingsPanel.classList.toggle('open');
+                    e.btnReset.onclick = () => this.resetPeak();
+                    $('btnResetCalibration').onclick = () => { this.hsv = { hMin:15, hMax:65, sMin:30, vMin:50 }; this.syncUI(); };
+                    ['hueMin','hueMax','satMin','valMin','trailWidth','circleGlow'].forEach(id => e[id].oninput = () => this.onSettingChange());
+                    e.trailColor.oninput = e.circleColor.oninput = () => this.onSettingChange();
                     window.onresize = () => { clearTimeout(this._rt); this._rt = setTimeout(() => this.handleResize(), 200); };
                     window.onorientationchange = () => setTimeout(() => this.handleResize(), 500);
                 }
@@ -427,6 +436,7 @@
                     const trailWidth = Math.max(2, parseInt(this.el.trailWidth.value) || 8);
                     const glow = parseInt(this.el.circleGlow.value) || 18;
 
+                    // --- TRAIL (always drawn if positions exist) ---
                     if (this.ballPositions.length > 1) {
                         ctx.save();
                         ctx.lineCap = 'round';
@@ -434,8 +444,8 @@
                             const prev = this.ballPositions[i-1];
                             const curr = this.ballPositions[i];
                             const age = (ts - curr.ts) / 2000;
-                            if (age > 1) continue;
-                            const alpha = 1 - age;
+                            if (age > 1) continue; // older than 2s fade out
+                            const alpha = 1 - age; // 1 → 0 over 2s
                             const px = dx + (prev.x/this.procWidth) * this.el.video.videoWidth * scale;
                             const py = dy + (prev.y/this.procHeight) * this.el.video.videoHeight * scale;
                             const cx = dx + (curr.x/this.procWidth) * this.el.video.videoWidth * scale;
@@ -451,6 +461,7 @@
                         ctx.restore();
                     }
 
+                    // --- PEAK GHOST TRAIL ---
                     if (this.peakTrail) {
                         const elapsed = ts - this.peakTrail.ts;
                         if (elapsed < this.peakTrailDuration) {
@@ -477,6 +488,7 @@
                         }
                     }
 
+                    // --- BALL CIRCLE (glow) ---
                     if (this.currentBall && this.ballDetected) {
                         const bx = dx + (this.currentBall.x/this.procWidth) * this.el.video.videoWidth * scale;
                         const by = dy + (this.currentBall.y/this.procHeight) * this.el.video.videoHeight * scale;
