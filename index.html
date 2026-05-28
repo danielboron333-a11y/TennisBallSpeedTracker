@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Tennis Ball Speed Radar – Buttons & Trail Fixed</title>
+    <title>Tennis Ball Speed Radar – Working Buttons & Better Detection</title>
     <style>
         :root {
             --bg: #0a0a0f; --surface: #12121d; --surface2: #1a1a2e; --text: #e0e0e0;
@@ -86,7 +86,7 @@
 <body>
     <div class="header">
         <h1>🎾 Ball Speed Radar Pro</h1>
-        <p class="subtitle">All buttons work · Trail is guaranteed · Customizable</p>
+        <p class="subtitle">All buttons work · Better detection · Trail guaranteed</p>
     </div>
     <div class="main-container">
         <div class="camera-wrapper" id="cameraWrapper">
@@ -113,19 +113,19 @@
         </div>
         <div class="settings-panel" id="settingsPanel">
             <h3>HSV Color Tuning</h3>
-            <div class="setting-row"><label>Hue Min</label><input type="range" id="hueMin" min="0" max="180" value="20"><span class="range-val" id="hueMinVal">20</span></div>
-            <div class="setting-row"><label>Hue Max</label><input type="range" id="hueMax" min="0" max="180" value="55"><span class="range-val" id="hueMaxVal">55</span></div>
-            <div class="setting-row"><label>Sat Min</label><input type="range" id="satMin" min="0" max="255" value="40"><span class="range-val" id="satMinVal">40</span></div>
-            <div class="setting-row"><label>Val Min</label><input type="range" id="valMin" min="0" max="255" value="60"><span class="range-val" id="valMinVal">60</span></div>
+            <div class="setting-row"><label>Hue Min</label><input type="range" id="hueMin" min="0" max="180" value="15"><span class="range-val" id="hueMinVal">15</span></div>
+            <div class="setting-row"><label>Hue Max</label><input type="range" id="hueMax" min="0" max="180" value="65"><span class="range-val" id="hueMaxVal">65</span></div>
+            <div class="setting-row"><label>Sat Min</label><input type="range" id="satMin" min="0" max="255" value="30"><span class="range-val" id="satMinVal">30</span></div>
+            <div class="setting-row"><label>Val Min</label><input type="range" id="valMin" min="0" max="255" value="50"><span class="range-val" id="valMinVal">50</span></div>
             <button id="btnResetCalibration" style="width:fit-content;">↩ Default</button>
             <h3 style="margin-top:12px;">Trail & Circle</h3>
             <div class="setting-row"><label>Trail Color</label><input type="color" id="trailColor" value="#ff3366"></div>
             <div class="setting-row"><label>Trail Width</label><input type="range" id="trailWidth" min="2" max="12" value="8"><span class="range-val" id="trailWidthVal">8</span></div>
             <div class="setting-row"><label>Circle Color</label><input type="color" id="circleColor" value="#c8e030"></div>
             <div class="setting-row"><label>Circle Glow</label><input type="range" id="circleGlow" min="5" max="30" value="18"><span class="range-val" id="circleGlowVal">18</span></div>
-            <p class="setting-hint">Trail is bright pink & thick – impossible to miss.</p>
+            <p class="setting-hint">Trail is bright pink & thick. Adjust HSV to improve detection.</p>
         </div>
-        <div class="info-banner"><strong>💡 Tip:</strong> Trail stays 2s after ball leaves. Click Start to test.</div>
+        <div class="info-banner"><strong>💡 Tip:</strong> Start camera, show a tennis ball. If not tracked, open Settings and adjust Hue/Sat.</div>
     </div>
 
     <script>
@@ -133,7 +133,7 @@
             const $ = id => document.getElementById(id);
             class Radar {
                 constructor() {
-                    // Cache ALL element IDs used in bindEvents
+                    // Cache all element IDs – includes ALL buttons and settings panel
                     const ids = [
                         'video','displayCanvas','cameraWrapper','statusDot','statusText','fpsDisplay',
                         'speedValue','speedKmh','peakSpeed','btnStart','btnCalibrate','btnSwitchCam',
@@ -142,7 +142,17 @@
                         'trailColor','trailWidth','trailWidthVal','circleColor','circleGlow','circleGlowVal'
                     ];
                     this.el = {};
-                    ids.forEach(id => this.el[id] = $(id));
+                    let missing = [];
+                    ids.forEach(id => {
+                        const el = $(id);
+                        if (!el) missing.push(id);
+                        this.el[id] = el;
+                    });
+                    if (missing.length) {
+                        console.error('Missing elements:', missing.join(', '));
+                        alert('UI error – missing buttons: ' + missing.join(', '));
+                        return;
+                    }
 
                     this.displayCtx = this.el.displayCanvas.getContext('2d');
                     this.procCanvas = document.createElement('canvas');
@@ -154,7 +164,8 @@
                     this.ballPositions = []; this.ballDetected = false; this.currentBall = null; this.trackedBall = null;
                     this.currentSpeedMph = 0; this.peakSpeedMph = 0; this.shotActive = false; this.shotPeakMph = 0;
                     this.framesSinceLastDetection = 0;
-                    this.hsv = { hMin:20, hMax:55, sMin:40, vMin:60 };
+                    // Wider default HSV for easier detection
+                    this.hsv = { hMin:15, hMax:65, sMin:30, vMin:50 };
                     this.ballDiam = 0.067;
                     this.lastFrameTime = performance.now(); this.fps = 0; this.fpsCounter = 0; this.fpsTimer = performance.now();
                     this.quality = 'medium';
@@ -171,16 +182,20 @@
 
                 bindEvents() {
                     const e = this.el;
-                    // All buttons are now guaranteed to exist
-                    e.btnStart.onclick = () => this.startCamera();
-                    e.btnCalibrate.onclick = () => this.startCalibration();
-                    e.btnSwitchCam.onclick = () => this.switchCamera();
-                    e.qualitySelect.onchange = () => this.changeQuality(e.qualitySelect.value);
-                    e.btnSettings.onclick = () => e.settingsPanel.classList.toggle('open');
-                    e.btnReset.onclick = () => this.resetPeak();
-                    $('btnResetCalibration').onclick = () => { this.hsv = { hMin:20, hMax:55, sMin:40, vMin:60 }; this.syncUI(); };
-                    ['hueMin','hueMax','satMin','valMin','trailWidth','circleGlow'].forEach(id => e[id].oninput = () => this.onSettingChange());
-                    e.trailColor.oninput = e.circleColor.oninput = () => this.onSettingChange();
+                    // Check that each element exists before assigning (redundant, but safe)
+                    if (e.btnStart) e.btnStart.onclick = () => this.startCamera();
+                    if (e.btnCalibrate) e.btnCalibrate.onclick = () => this.startCalibration();
+                    if (e.btnSwitchCam) e.btnSwitchCam.onclick = () => this.switchCamera();
+                    if (e.qualitySelect) e.qualitySelect.onchange = () => this.changeQuality(e.qualitySelect.value);
+                    if (e.btnSettings && e.settingsPanel) e.btnSettings.onclick = () => e.settingsPanel.classList.toggle('open');
+                    if (e.btnReset) e.btnReset.onclick = () => this.resetPeak();
+                    const resetBtn = $('btnResetCalibration');
+                    if (resetBtn) resetBtn.onclick = () => { this.hsv = { hMin:15, hMax:65, sMin:30, vMin:50 }; this.syncUI(); };
+                    ['hueMin','hueMax','satMin','valMin','trailWidth','circleGlow'].forEach(id => {
+                        if (e[id]) e[id].oninput = () => this.onSettingChange();
+                    });
+                    if (e.trailColor) e.trailColor.oninput = () => this.onSettingChange();
+                    if (e.circleColor) e.circleColor.oninput = () => this.onSettingChange();
                     window.onresize = () => { clearTimeout(this._rt); this._rt = setTimeout(() => this.handleResize(), 200); };
                     window.onorientationchange = () => setTimeout(() => this.handleResize(), 500);
                 }
@@ -286,10 +301,7 @@
                         if (this.framesSinceLastDetection > 10) {
                             this.ballDetected = false;
                             this.currentBall = null;
-                            // Keep trail for 2 seconds after loss
-                            if (ts - this.lastDetectionTime > 2000) {
-                                this.ballPositions = [];
-                            }
+                            if (ts - this.lastDetectionTime > 2000) this.ballPositions = [];
                             if (this.shotActive && this.framesSinceLastDetection > 20) this.endShot();
                         }
                     }
@@ -415,17 +427,15 @@
                     const trailWidth = Math.max(2, parseInt(this.el.trailWidth.value) || 8);
                     const glow = parseInt(this.el.circleGlow.value) || 18;
 
-                    // Trail - guaranteed thick and bright
                     if (this.ballPositions.length > 1) {
                         ctx.save();
                         ctx.lineCap = 'round';
-                        ctx.lineJoin = 'round';
                         for (let i = 1; i < this.ballPositions.length; i++) {
                             const prev = this.ballPositions[i-1];
                             const curr = this.ballPositions[i];
-                            const age = (ts - curr.ts) / 2000; // 0-1 over 2 seconds
+                            const age = (ts - curr.ts) / 2000;
                             if (age > 1) continue;
-                            const alpha = 1 - age; // 1 (fresh) to 0 (old)
+                            const alpha = 1 - age;
                             const px = dx + (prev.x/this.procWidth) * this.el.video.videoWidth * scale;
                             const py = dy + (prev.y/this.procHeight) * this.el.video.videoHeight * scale;
                             const cx = dx + (curr.x/this.procWidth) * this.el.video.videoWidth * scale;
@@ -441,7 +451,6 @@
                         ctx.restore();
                     }
 
-                    // Peak ghost trail
                     if (this.peakTrail) {
                         const elapsed = ts - this.peakTrail.ts;
                         if (elapsed < this.peakTrailDuration) {
@@ -468,7 +477,6 @@
                         }
                     }
 
-                    // Ball circle
                     if (this.currentBall && this.ballDetected) {
                         const bx = dx + (this.currentBall.x/this.procWidth) * this.el.video.videoWidth * scale;
                         const by = dy + (this.currentBall.y/this.procHeight) * this.el.video.videoHeight * scale;
